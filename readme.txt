@@ -3,7 +3,7 @@ Contributors: webifya
 Tags: slider, carousel, image slider, responsive slider
 Requires at least: 6.2
 Requires PHP: 7.4
-Stable tag: 0.2.0
+Stable tag: 0.3.0
 License: GPLv2 or later
 
 A lightweight responsive slider builder for WordPress.
@@ -21,6 +21,10 @@ Use `[my_slider id="123"]` to display a slider.
 3. Open Sliders > Add New.
 
 == Changelog ==
+
+= 0.3.0 =
+* Added repeatable visual layers, responsive layer visibility and global styles.
+* Added stable slider events and CTA identifiers for extensions.
 
 = 0.2.0 =
 * Added media selection, responsive previews, design controls and four starter templates.

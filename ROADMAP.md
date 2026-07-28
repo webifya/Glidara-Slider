@@ -15,10 +15,11 @@
 
 ### 0.2 — Visual editor
 
-- Layer editing for heading, text, button, image and icon
-- Desktop/tablet/mobile previews
-- Per-device layer visibility
-- Reusable global styles
+- [x] Layer editing for heading, text, button, image and icon
+- [x] Desktop/tablet/mobile previews
+- [x] Tablet/mobile layer visibility
+- [x] Reusable global styles
+- [ ] Direct manipulation canvas with drag/resize handles
 
 ## Pro
 

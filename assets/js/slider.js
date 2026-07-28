@@ -9,6 +9,7 @@ document.querySelectorAll('.my-slider').forEach((root) => {
     slides.forEach((slide, i) => slide.setAttribute('aria-hidden', i === current ? 'false' : 'true'));
     dots.forEach((dot, i) => dot.setAttribute('aria-selected', i === current ? 'true' : 'false'));
     if (settings.auto_height) root.style.height = `${slides[current].scrollHeight}px`;
+    root.dispatchEvent(new CustomEvent('mySliderChange', { detail: { sliderId: Number(root.dataset.sliderId || 0), slide: current } }));
   };
   const play = () => { if (settings.autoplay) timer = window.setInterval(() => show(current + 1), Number(settings.duration) || 5000); };
   const stop = () => window.clearInterval(timer);
@@ -22,4 +23,3 @@ document.querySelectorAll('.my-slider').forEach((root) => {
   if (settings.pause_hover) { root.addEventListener('mouseenter', stop); root.addEventListener('mouseleave', play); }
   show(0); play();
 });
-

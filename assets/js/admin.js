@@ -1,6 +1,8 @@
 jQuery(($) => {
   const builder = $('#my-slider-builder');
+  const uid = () => window.crypto?.randomUUID?.() || `my-slider-${Date.now()}-${Math.random().toString(16).slice(2)}`;
   const list = builder.find('.my-slider-slides').sortable({ handle: '.my-slider-handle', update: preview });
+  builder.find('.my-slider-layers').sortable({ handle: '.my-slider-layer-handle' });
   const templates = {
     hero: { title: 'Build something remarkable', content: 'A clear promise, concise explanation, and one strong call to action.', button_text: 'Get started', background: '#172554' },
     gallery: { title: 'Featured image', content: 'Add a short caption for this photograph.', background: '#111827' },
@@ -19,6 +21,7 @@ jQuery(($) => {
   function addSlide(preset = {}) {
     const index = Number(builder.attr('data-next-index') || 0);
     const slide = $(wp.template('my-slider-slide')({ index }));
+    slide.find('> input[name$="[uid]"]').val(uid());
     Object.entries(preset).forEach(([key, value]) => slide.find(`[name$="[${key}]"]`).val(value));
     list.append(slide);
     builder.attr('data-next-index', index + 1);
@@ -37,6 +40,17 @@ jQuery(($) => {
       frame.open();
     })
     .on('click', '.my-slider-remove', function () { $(this).closest('.my-slider-slide').remove(); preview(); })
+    .on('click', '.my-slider-add-layer', function () {
+      const slide = $(this).closest('.my-slider-slide');
+      const slideIndex = slide.index();
+      const layers = slide.find('.my-slider-layers');
+      const layerIndex = Number(layers.attr('data-next-layer') || 0);
+      const layer = $(wp.template('my-slider-layer')({ slide: slideIndex, layer: layerIndex }));
+      layer.find('input[name$="[uid]"]').val(uid());
+      layers.append(layer).sortable({ handle: '.my-slider-layer-handle' });
+      layers.attr('data-next-layer', layerIndex + 1);
+    })
+    .on('click', '.my-slider-remove-layer', function () { $(this).closest('.my-slider-layer').remove(); })
     .on('click', '.my-slider-device', function () {
       builder.find('.my-slider-device').removeClass('is-active');
       $(this).addClass('is-active');
@@ -47,5 +61,17 @@ jQuery(($) => {
       this.value = '';
     })
     .on('input change', 'input, textarea, select', preview);
+  builder.closest('form').on('submit', () => {
+    list.find('.my-slider-slide').each(function (slideIndex) {
+      $(this).find(':input[name^="my_slider_slides["]').each(function () {
+        this.name = this.name.replace(/^my_slider_slides\[[^\]]+\]/, `my_slider_slides[${slideIndex}]`);
+      });
+      $(this).find('.my-slider-layer').each(function (layerIndex) {
+        $(this).find(':input').each(function () {
+          this.name = this.name.replace(/\[layers\]\[[^\]]+\]/, `[layers][${layerIndex}]`);
+        });
+      });
+    });
+  });
   preview();
 });

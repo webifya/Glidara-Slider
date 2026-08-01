@@ -1,4 +1,5 @@
 jQuery(($) => {
+  document.body.classList.add('glidara-fullscreen-editor');
   const builder = $('#glidara-slider-builder');
   const uid = () => window.crypto?.randomUUID?.() || `glidara-slider-${Date.now()}-${Math.random().toString(16).slice(2)}`;
   const list = builder.find('.glidara-slider-slides').sortable({ handle: '.glidara-slider-handle', update: preview });

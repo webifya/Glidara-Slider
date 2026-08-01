@@ -8,19 +8,20 @@ This document labels features honestly. “Shipped” means available in 2.2.2. 
 
 ### Shipped
 
-- Unlimited sliders and slides, draft/published status, media-library images, drag-and-drop ordering, duplicate slides and sliders
+- Unlimited sliders and slides (including JSON migration), draft/published status, media-library images, drag-and-drop ordering, duplicate slides and sliders
+- Separate image title, description, caption and alt text fields; Media Library metadata is filled automatically without overwriting existing copy
 - Image, text, video URL, HTML and shortcode slide content
 - Button text, URL and same/new-window target; alt text and responsive WordPress image output
 - Standard, full-width, carousel, thumbnail, logo and testimonial presentation modes
 - Desktop, tablet and mobile preview; mobile height; cover, contain and original image fit; device visibility; swipe and touch
 - Arrows, dots/thumbnails, hover navigation, keyboard and mouse-wheel controls
 - Slide/fade plus visual transition presets, autoplay, timing, pause on hover, loop, stop on last and random start
-- Width, height, spacing, radius, shadow, color, gradient, overlay, alignment and basic custom CSS
+- Width, height, caption placement/background, spacing, radius, shadow, color, gradient, overlay, alignment and basic custom CSS
 - Dedicated Slides, Slider Settings and Publish editor tabs, with responsive carousel counts and clearer grouped controls
 - Dot, number and thumbnail pagination; circle, square and minimal arrows; configurable start slide and heading semantics
 - Gutenberg block, shortcode, PHP helper, Classic Editor button and widget
-- Lazy loading, native dimensions/srcset through WordPress, WebP/AVIF compatibility, reduced-motion support and conditional assets
-- JSON import/export, reset-friendly defaults, system information, debug preference and uninstall data retention
+- Lazy loading, native dimensions/srcset through WordPress, WebP/AVIF compatibility, reduced-motion support, minified frontend assets and conditional loading
+- JSON import/export, one-click settings reset, system information, debug preference and uninstall data retention
 - Eight starter templates and a slider health summary
 
 ### Foundation

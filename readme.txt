@@ -25,8 +25,10 @@ Publish with the Glidara block, widget, Classic Editor button, `[glidara_slider 
 
 = 2.2.2 =
 * Added Create New Slider and Go Pro links on the Plugins screen, plus a dedicated $19.99/year upgrade page.
+* Moved Glidara Slider beneath the WordPress Settings menu and rebuilt the editor around Slides, Slider Settings and Publish tabs.
 * Added standard, carousel, thumbnail, logo and testimonial layouts, with full-width and device-specific controls.
-* Added duplicate slide/slider, link targets, mobile height, image-fit, random start, stop-on-last-slide and hover navigation.
+* Added duplicate slide/slider, link targets, responsive item counts, start slide, mobile height, image-fit, random start, stop-on-last-slide and hover navigation.
+* Added numbered/thumbnail pagination, arrow styles and positions, semantic heading selection, text sizing and independent button/caption colors.
 * Added Gutenberg block, Classic Editor button, widget, PHP helper, JSON import/export and uninstall retention controls.
 * Added Tools & Health diagnostics for missing alt text, empty slides, environment information and debug preferences.
 

@@ -16,6 +16,8 @@ This document labels features honestly. “Shipped” means available in 2.2.2. 
 - Arrows, dots/thumbnails, hover navigation, keyboard and mouse-wheel controls
 - Slide/fade plus visual transition presets, autoplay, timing, pause on hover, loop, stop on last and random start
 - Width, height, spacing, radius, shadow, color, gradient, overlay, alignment and basic custom CSS
+- Dedicated Slides, Slider Settings and Publish editor tabs, with responsive carousel counts and clearer grouped controls
+- Dot, number and thumbnail pagination; circle, square and minimal arrows; configurable start slide and heading semantics
 - Gutenberg block, shortcode, PHP helper, Classic Editor button and widget
 - Lazy loading, native dimensions/srcset through WordPress, WebP/AVIF compatibility, reduced-motion support and conditional assets
 - JSON import/export, reset-friendly defaults, system information, debug preference and uninstall data retention

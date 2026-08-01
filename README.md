@@ -1,6 +1,8 @@
 # Glidara Slider
 
-The free, open-source slider plugin by Webifya.
+The free, open-source slider plugin by [Mahfuzar Rahman](https://webninjallc.com) at Web Ninja LLC.
+
+Official plugin page: https://webninjallc.com/plugins/glidara
 
 Development repository: https://github.com/webifya/Glidara-Slider
 

@@ -8,7 +8,7 @@ Development repository: https://github.com/webifya/Glidara-Slider
 
 ## Current milestone: 3.0.0
 
-The WordPress dashboard entry is **Settings → Glidara Slider**. Each slider uses dedicated **Slides**, **Slider Settings**, and **Publish** tabs for a cleaner editing workflow.
+The WordPress dashboard entry is **GlidaraSlider**. Its dedicated workspace manages every slider, while each editor uses **Slides**, **Slider Settings**, and **Publish** tabs plus an exact frontend preview popup.
 
 - Unlimited sliders and slides
 - Drag-and-drop ordering and live preview
@@ -26,6 +26,7 @@ The WordPress dashboard entry is **Settings → Glidara Slider**. Each slider us
 - Gutenberg create/edit shortcuts plus wide, full-width and anchor support
 - Inline Slider Health feedback for titles, image alt text and CTA completeness
 - Twelve starter templates spanning business, portfolio, SaaS, hospitality, property and events
+- Dedicated top-level management workspace and exact saved-output preview popup
 
 ## Roadmap
 

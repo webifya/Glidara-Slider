@@ -49,7 +49,11 @@ jQuery(($) => {
         const image = frame.state().get('selection').first().toJSON();
         row.find('.glidara-slider-image-url').val(image.url).trigger('change');
         row.find('.glidara-slider-image-id').val(image.id);
-        row.closest('.glidara-slider-fields').find('[name$="[image_alt]"]').val(image.alt || '');
+		const fields = row.closest('.glidara-slider-fields');
+		fields.find('[name$="[image_alt]"]').val(image.alt || '');
+		if (!fields.find('[name$="[title]"]').val()) fields.find('[name$="[title]"]').val(image.title || '');
+		if (!fields.find('[name$="[content]"]').val()) fields.find('[name$="[content]"]').val(image.description || '');
+		if (!fields.find('[name$="[caption]"]').val()) fields.find('[name$="[caption]"]').val(image.caption || '');
       });
       frame.open();
     })

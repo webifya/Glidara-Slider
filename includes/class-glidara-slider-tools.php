@@ -74,7 +74,7 @@ final class Glidara_Slider_Tools {
 
 	private function sanitize_slides( $slides ) {
 		$clean = array();
-		foreach ( array_slice( (array) $slides, 0, 250 ) as $slide ) {
+		foreach ( (array) $slides as $slide ) {
 			$layers = array();
 			foreach ( array_slice( (array) ( $slide['layers'] ?? array() ), 0, 50 ) as $layer ) {
 				$layers[] = array(
@@ -86,7 +86,7 @@ final class Glidara_Slider_Tools {
 			}
 			$clean[] = array(
 				'uid' => sanitize_key( $slide['uid'] ?? wp_generate_uuid4() ), 'type' => in_array( $slide['type'] ?? '', array( 'image', 'text', 'video', 'html', 'shortcode' ), true ) ? $slide['type'] : 'image',
-				'title' => sanitize_text_field( $slide['title'] ?? '' ), 'content' => wp_kses_post( $slide['content'] ?? '' ), 'image' => esc_url_raw( $slide['image'] ?? '' ), 'image_id' => absint( $slide['image_id'] ?? 0 ), 'image_alt' => sanitize_text_field( $slide['image_alt'] ?? '' ),
+				'title' => sanitize_text_field( $slide['title'] ?? '' ), 'content' => wp_kses_post( $slide['content'] ?? '' ), 'caption' => sanitize_text_field( $slide['caption'] ?? '' ), 'image' => esc_url_raw( $slide['image'] ?? '' ), 'image_id' => absint( $slide['image_id'] ?? 0 ), 'image_alt' => sanitize_text_field( $slide['image_alt'] ?? '' ),
 				'video' => esc_url_raw( $slide['video'] ?? '' ), 'button_text' => sanitize_text_field( $slide['button_text'] ?? '' ), 'button_url' => esc_url_raw( $slide['button_url'] ?? '' ), 'button_target' => '_blank' === ( $slide['button_target'] ?? '' ) ? '_blank' : '_self',
 				'background' => sanitize_hex_color( $slide['background'] ?? '' ) ?: '#141525', 'overlay_opacity' => min( 100, absint( $slide['overlay_opacity'] ?? 55 ) ), 'align' => in_array( $slide['align'] ?? '', array( 'left', 'center', 'right' ), true ) ? $slide['align'] : 'left', 'hide_mobile' => empty( $slide['hide_mobile'] ) ? 0 : 1, 'layers' => $layers,
 			);

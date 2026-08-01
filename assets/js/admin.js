@@ -11,8 +11,29 @@ jQuery(($) => {
     logo: { title: 'Trusted by ambitious teams', content: 'Choose a transparent logo image and use the Logo Carousel layout.', background: '#171820', overlay_opacity: 12 },
     testimonial: { title: '“The result exceeded every expectation.”', content: 'Customer Name — Company', background: '#34235f', overlay_opacity: 30 },
     promo: { title: 'A better offer starts here', content: 'Give the campaign a clear deadline, benefit, and next action.', button_text: 'Claim the offer', background: '#7f1d3f', overlay_opacity: 46 },
-    editorial: { title: 'A story worth discovering', content: 'Use strong editorial imagery and concise supporting copy.', button_text: 'Read the feature', background: '#27354a', overlay_opacity: 52 }
+    editorial: { title: 'A story worth discovering', content: 'Use strong editorial imagery and concise supporting copy.', button_text: 'Read the feature', background: '#27354a', overlay_opacity: 52 },
+    saas: { title: 'One workspace. Remarkable momentum.', content: 'Help your team plan, create, and ship without the busywork.', button_text: 'Start free', background: '#35258b', overlay_opacity: 48 },
+    restaurant: { title: 'An evening worth remembering', content: 'Seasonal ingredients, thoughtful hospitality, and a table waiting for you.', button_text: 'Reserve a table', background: '#512b24', overlay_opacity: 56 },
+    realestate: { title: 'Find the place that feels like home', content: 'Explore distinctive homes in the neighborhoods you love.', button_text: 'View properties', background: '#183b45', overlay_opacity: 50 },
+    event: { title: 'The ideas shaping what comes next', content: 'Join builders, leaders, and creators for one unforgettable day.', button_text: 'Get tickets', background: '#561943', overlay_opacity: 54 }
   };
+	function health() {
+	  const slides = list.find('.glidara-slider-slide');
+	  let score = slides.length ? 100 : 0;
+	  slides.each(function () {
+		const row = $(this);
+		if (row.find('[name$="[image]"]').val() && !row.find('[name$="[image_alt]"]').val()) score -= 8;
+		const button = row.find('[name$="[button_text]"]').val();
+		const url = row.find('[name$="[button_url]"]').val();
+		if ((button && !url) || (!button && url)) score -= 6;
+		if (!row.find('[name$="[title]"]').val()) score -= 4;
+	  });
+	  if (slides.length > 12) score -= 5;
+	  score = Math.max(0, score);
+	  const badge = builder.find('.glidara-editor-health');
+	  badge.find('strong').text(score);
+	  badge.toggleClass('has-warning', score < 80).attr('title', score < 80 ? 'Add titles and alt text, and complete CTA links.' : 'Content, accessibility, and conversion basics look healthy.');
+	}
   function preview() {
     const cards = list.find('.glidara-slider-slide').map(function () {
       const title = $(this).find('[name$="[title]"]').val() || 'Untitled slide';
@@ -21,6 +42,7 @@ jQuery(($) => {
       return `<div class="glidara-slider-preview__slide" style="background-color:${bg};${image ? `background-image:url('${image.replace(/'/g, '%27')}')` : ''}"><strong>${$('<div>').text(title).html()}</strong></div>`;
     }).get();
     builder.find('.glidara-slider-preview').html(cards.join(''));
+		health();
   }
   function addSlide(preset = {}) {
     const index = Number(builder.attr('data-next-index') || 0);

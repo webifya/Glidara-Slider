@@ -4,7 +4,7 @@ The free, open-source slider plugin by Webifya.
 
 Development repository: https://github.com/webifya/Glidara-Slider
 
-## Current milestone: 2.2.2
+## Current milestone: 2.5.0
 
 The WordPress dashboard entry is **Settings → Glidara Slider**. Each slider uses dedicated **Slides**, **Slider Settings**, and **Publish** tabs for a cleaner editing workflow.
 
@@ -18,10 +18,9 @@ The WordPress dashboard entry is **Settings → Glidara Slider**. Each slider us
 - WordPress media picker, alt text, responsive previews and starter templates
 - Slide background, overlay, alignment, boxed layout, radius and shadow controls
 - Mobile content visibility controls
-- Repeatable heading, text, button, image and icon layers
-- Drag-to-order layer list with percentage positioning and responsive visibility
+- Pro-compatible rendering foundation; layer editing appears only when Glidara Slider Pro is active
 - Global accent, text, font and button styles
-- Stable slide/layer identifiers for Pro analytics
+- Stable slide identifiers for optional Pro analytics
 
 ## Roadmap
 

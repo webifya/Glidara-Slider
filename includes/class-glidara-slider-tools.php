@@ -78,16 +78,16 @@ final class Glidara_Slider_Tools {
 			$layers = array();
 			foreach ( array_slice( (array) ( $slide['layers'] ?? array() ), 0, 50 ) as $layer ) {
 				$layers[] = array(
-					'uid' => sanitize_key( $layer['uid'] ?? wp_generate_uuid4() ), 'type' => in_array( $layer['type'] ?? '', array( 'heading', 'text', 'button', 'image', 'icon' ), true ) ? $layer['type'] : 'text',
+					'uid' => sanitize_key( $layer['uid'] ?? wp_generate_uuid4() ), 'type' => in_array( $layer['type'] ?? '', array( 'heading', 'text', 'button', 'image', 'icon', 'svg', 'shape', 'video', 'html' ), true ) ? $layer['type'] : 'text',
 					'content' => sanitize_text_field( $layer['content'] ?? '' ), 'url' => esc_url_raw( $layer['url'] ?? '' ), 'image' => esc_url_raw( $layer['image'] ?? '' ),
 					'x' => min( 100, absint( $layer['x'] ?? 10 ) ), 'y' => min( 100, absint( $layer['y'] ?? 10 ) ), 'width' => min( 100, max( 5, absint( $layer['width'] ?? 50 ) ) ), 'size' => min( 200, max( 8, absint( $layer['size'] ?? 24 ) ) ),
-					'color' => sanitize_hex_color( $layer['color'] ?? '' ) ?: '#ffffff', 'hide_tablet' => empty( $layer['hide_tablet'] ) ? 0 : 1, 'hide_mobile' => empty( $layer['hide_mobile'] ) ? 0 : 1,
+					'color' => sanitize_hex_color( $layer['color'] ?? '' ) ?: '#ffffff', 'z' => min( 100, max( 1, absint( $layer['z'] ?? 3 ) ) ), 'animation' => in_array( $layer['animation'] ?? '', array( 'none', 'fade', 'slide-up', 'slide-left', 'zoom' ), true ) ? $layer['animation'] : 'none', 'delay' => min( 10000, absint( $layer['delay'] ?? 0 ) ), 'locked' => empty( $layer['locked'] ) ? 0 : 1, 'hide_tablet' => empty( $layer['hide_tablet'] ) ? 0 : 1, 'hide_mobile' => empty( $layer['hide_mobile'] ) ? 0 : 1,
 				);
 			}
 			$clean[] = array(
 				'uid' => sanitize_key( $slide['uid'] ?? wp_generate_uuid4() ), 'type' => in_array( $slide['type'] ?? '', array( 'image', 'text', 'video', 'html', 'shortcode' ), true ) ? $slide['type'] : 'image',
 				'title' => sanitize_text_field( $slide['title'] ?? '' ), 'content' => wp_kses_post( $slide['content'] ?? '' ), 'caption' => sanitize_text_field( $slide['caption'] ?? '' ), 'image' => esc_url_raw( $slide['image'] ?? '' ), 'image_id' => absint( $slide['image_id'] ?? 0 ), 'image_alt' => sanitize_text_field( $slide['image_alt'] ?? '' ),
-				'video' => esc_url_raw( $slide['video'] ?? '' ), 'button_text' => sanitize_text_field( $slide['button_text'] ?? '' ), 'button_url' => esc_url_raw( $slide['button_url'] ?? '' ), 'button_target' => '_blank' === ( $slide['button_target'] ?? '' ) ? '_blank' : '_self',
+				'video' => esc_url_raw( $slide['video'] ?? '' ), 'pro_video' => esc_url_raw( $slide['pro_video'] ?? '' ), 'video_poster' => esc_url_raw( $slide['video_poster'] ?? '' ), 'video_autoplay' => empty( $slide['video_autoplay'] ) ? 0 : 1, 'video_muted' => empty( $slide['video_muted'] ) ? 0 : 1, 'video_loop' => empty( $slide['video_loop'] ) ? 0 : 1, 'background_video' => empty( $slide['background_video'] ) ? 0 : 1, 'button_text' => sanitize_text_field( $slide['button_text'] ?? '' ), 'button_url' => esc_url_raw( $slide['button_url'] ?? '' ), 'button_target' => '_blank' === ( $slide['button_target'] ?? '' ) ? '_blank' : '_self',
 				'background' => sanitize_hex_color( $slide['background'] ?? '' ) ?: '#141525', 'overlay_opacity' => min( 100, absint( $slide['overlay_opacity'] ?? 55 ) ), 'align' => in_array( $slide['align'] ?? '', array( 'left', 'center', 'right' ), true ) ? $slide['align'] : 'left', 'hide_mobile' => empty( $slide['hide_mobile'] ) ? 0 : 1, 'layers' => $layers,
 			);
 		}
@@ -106,11 +106,25 @@ final class Glidara_Slider_Tools {
 	public function tools_page() {
 		if ( ! current_user_can( 'manage_options' ) ) return;
 		$sliders = get_posts( array( 'post_type' => 'glidara_slider', 'post_status' => array( 'publish', 'draft' ), 'numberposts' => -1 ) );
-		$without_slides = 0; $without_alt = 0;
-		foreach ( $sliders as $slider ) foreach ( (array) get_post_meta( $slider->ID, '_glidara_slider_slides', true ) as $slide ) { if ( empty( $slide['image'] ) && empty( $slide['content'] ) ) $without_slides++; if ( ! empty( $slide['image'] ) && empty( $slide['image_alt'] ) ) $without_alt++; }
+		$audit = array( 'empty' => 0, 'alt' => 0, 'oversized' => 0, 'missing_cta' => 0, 'long' => 0, 'autoplay' => 0, 'bytes' => 0 );
+		foreach ( $sliders as $slider ) {
+			$slides = (array) get_post_meta( $slider->ID, '_glidara_slider_slides', true );
+			$settings = (array) get_post_meta( $slider->ID, '_glidara_slider_settings', true );
+			if ( count( $slides ) > 12 ) $audit['long']++;
+			if ( ! empty( $settings['autoplay'] ) && empty( $settings['pause_hover'] ) ) $audit['autoplay']++;
+			foreach ( $slides as $slide ) {
+				if ( empty( $slide['image'] ) && empty( $slide['content'] ) ) $audit['empty']++;
+				if ( ! empty( $slide['image'] ) && empty( $slide['image_alt'] ) ) $audit['alt']++;
+				if ( ! empty( $slide['button_text'] ) xor ! empty( $slide['button_url'] ) ) $audit['missing_cta']++;
+				if ( ! empty( $slide['image_id'] ) ) { $file = get_attached_file( absint( $slide['image_id'] ) ); $size = $file && is_readable( $file ) ? filesize( $file ) : 0; $audit['bytes'] += $size; if ( $size > 700000 ) $audit['oversized']++; }
+			}
+		}
+		$issues = $audit['empty'] + $audit['alt'] + $audit['oversized'] + $audit['missing_cta'] + $audit['long'] + $audit['autoplay'];
+		$score = max( 0, 100 - min( 80, $issues * 6 ) );
 		?>
-		<div class="wrap glidara-pro-page"><div class="glidara-brand"><span class="glidara-brand__mark">G</span><div><h1><?php esc_html_e( 'Glidara Tools & Health', 'glidara-slider' ); ?></h1><p><?php esc_html_e( 'Migration, diagnostics and maintenance in one place.', 'glidara-slider' ); ?></p></div></div>
-		<div class="glidara-feature-grid"><article><span class="dashicons dashicons-images-alt2"></span><h3><?php echo absint( count( $sliders ) ); ?> <?php esc_html_e( 'sliders', 'glidara-slider' ); ?></h3><p><?php esc_html_e( 'Published and draft sliders.', 'glidara-slider' ); ?></p></article><article><span class="dashicons dashicons-warning"></span><h3><?php echo absint( $without_alt ); ?> <?php esc_html_e( 'missing alt text', 'glidara-slider' ); ?></h3><p><?php esc_html_e( 'Improve accessibility and image context.', 'glidara-slider' ); ?></p></article><article><span class="dashicons dashicons-heart"></span><h3><?php echo $without_slides ? esc_html__( 'Needs attention', 'glidara-slider' ) : esc_html__( 'Healthy', 'glidara-slider' ); ?></h3><p><?php echo esc_html( sprintf( __( '%d empty slide records found.', 'glidara-slider' ), $without_slides ) ); ?></p></article></div>
+		<div class="wrap glidara-pro-page"><div class="glidara-brand"><span class="glidara-brand__mark">G</span><div><h1><?php esc_html_e( 'Glidara Health Checker 2.0', 'glidara-slider' ); ?></h1><p><?php esc_html_e( 'Performance, accessibility, SEO and conversion checks without external requests.', 'glidara-slider' ); ?></p></div></div>
+		<div class="glidara-health-score"><strong><?php echo absint( $score ); ?></strong><span>/100</span><div><h2><?php echo $score >= 90 ? esc_html__( 'Excellent', 'glidara-slider' ) : ( $score >= 70 ? esc_html__( 'Good, with opportunities', 'glidara-slider' ) : esc_html__( 'Needs attention', 'glidara-slider' ) ); ?></h2><p><?php echo esc_html( sprintf( __( '%1$d checks need attention across %2$d sliders. Estimated source image weight: %3$s.', 'glidara-slider' ), $issues, count( $sliders ), size_format( $audit['bytes'] ) ) ); ?></p></div></div>
+		<div class="glidara-feature-grid glidara-health-grid"><?php foreach ( array( 'alt' => array( 'Accessibility', 'Missing image alt text' ), 'oversized' => array( 'Performance', 'Images larger than 700 KB' ), 'missing_cta' => array( 'Conversion', 'Incomplete button links' ), 'empty' => array( 'Content', 'Empty slide records' ), 'long' => array( 'Experience', 'Sliders with over 12 slides' ), 'autoplay' => array( 'Motion', 'Autoplay without pause-on-hover' ) ) as $key => $copy ) : ?><article class="<?php echo $audit[ $key ] ? 'has-warning' : 'is-healthy'; ?>"><span class="dashicons <?php echo $audit[ $key ] ? 'dashicons-warning' : 'dashicons-yes-alt'; ?>"></span><h3><?php echo absint( $audit[ $key ] ); ?> <?php echo esc_html( $copy[0] ); ?></h3><p><?php echo esc_html( $copy[1] ); ?></p></article><?php endforeach; ?></div>
 		<h2><?php esc_html_e( 'Import slider', 'glidara-slider' ); ?></h2><form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" enctype="multipart/form-data"><input type="hidden" name="action" value="glidara_slider_import"><?php wp_nonce_field( 'glidara_slider_import' ); ?><input type="file" name="slider_json" accept="application/json" required> <?php submit_button( __( 'Import JSON', 'glidara-slider' ), 'secondary', 'submit', false ); ?></form>
 		<h2><?php esc_html_e( 'Maintenance', 'glidara-slider' ); ?></h2><form method="post" action="options.php"><?php settings_fields( 'glidara_slider_tools' ); ?><p><label><input type="checkbox" name="glidara_slider_debug" value="1" <?php checked( get_option( 'glidara_slider_debug', 0 ) ); ?>> <?php esc_html_e( 'Enable debug mode', 'glidara-slider' ); ?></label></p><p><label><input type="checkbox" name="glidara_slider_retain_data" value="1" <?php checked( get_option( 'glidara_slider_retain_data', 1 ) ); ?>> <?php esc_html_e( 'Retain slider data when the plugin is deleted', 'glidara-slider' ); ?></label></p><?php submit_button(); ?></form>
 		<h2><?php esc_html_e( 'System information', 'glidara-slider' ); ?></h2><textarea class="large-text code" rows="7" readonly><?php echo esc_textarea( 'Glidara: ' . GLIDARA_SLIDER_VERSION . "\nWordPress: " . get_bloginfo( 'version' ) . "\nPHP: " . PHP_VERSION . "\nTheme: " . wp_get_theme()->get( 'Name' ) . "\nMemory limit: " . WP_MEMORY_LIMIT . "\nSliders: " . count( $sliders ) ); ?></textarea></div>

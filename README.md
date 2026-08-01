@@ -4,7 +4,7 @@ The free, open-source slider plugin by Webifya.
 
 Development repository: https://github.com/webifya/Glidara-Slider
 
-## Current milestone: 1.0.0
+## Current milestone: 2.2.2
 
 - Unlimited sliders and slides
 - Drag-and-drop ordering and live preview

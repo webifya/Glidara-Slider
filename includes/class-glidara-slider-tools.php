@@ -26,7 +26,7 @@ final class Glidara_Slider_Tools {
 
 	public function plugin_links( $links ) {
 		$create = '<a href="' . esc_url( admin_url( 'post-new.php?post_type=glidara_slider' ) ) . '"><strong>' . esc_html__( 'Create New Slider', 'glidara-slider' ) . '</strong></a>';
-		$pro = '<a style="color:#6d5dfc;font-weight:700" href="' . esc_url( admin_url( 'edit.php?post_type=glidara_slider&page=glidara-slider-go-pro' ) ) . '">' . esc_html__( 'Go Pro', 'glidara-slider' ) . '</a>';
+		$pro = '<a style="color:#6d5dfc;font-weight:700" href="' . esc_url( admin_url( 'options-general.php?page=glidara-slider-go-pro' ) ) . '">' . esc_html__( 'Go Pro', 'glidara-slider' ) . '</a>';
 		array_unshift( $links, $create, $pro );
 		return $links;
 	}
@@ -95,7 +95,7 @@ final class Glidara_Slider_Tools {
 	}
 
 	public function admin_menu() {
-		add_submenu_page( 'edit.php?post_type=glidara_slider', __( 'Tools & Health', 'glidara-slider' ), __( 'Tools & Health', 'glidara-slider' ), 'manage_options', 'glidara-slider-tools', array( $this, 'tools_page' ) );
+		add_submenu_page( 'options-general.php', __( 'Glidara Tools & Health', 'glidara-slider' ), __( 'Glidara Slider — Tools', 'glidara-slider' ), 'manage_options', 'glidara-slider-tools', array( $this, 'tools_page' ) );
 	}
 
 	public function settings() {

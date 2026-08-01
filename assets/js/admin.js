@@ -1,0 +1,77 @@
+jQuery(($) => {
+  const builder = $('#glidara-slider-builder');
+  const uid = () => window.crypto?.randomUUID?.() || `glidara-slider-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  const list = builder.find('.glidara-slider-slides').sortable({ handle: '.glidara-slider-handle', update: preview });
+  builder.find('.glidara-slider-layers').sortable({ handle: '.glidara-slider-layer-handle' });
+  const templates = {
+    hero: { title: 'Ideas that move people', content: 'Create a bold first impression with focused copy and elegant motion.', button_text: 'Explore Glidara', background: '#17152e', overlay_opacity: 55 },
+    gallery: { title: 'Stories, beautifully framed', content: 'Pair immersive imagery with a short, memorable caption.', background: '#11131d', overlay_opacity: 42 },
+    business: { title: 'Make your next move matter', content: 'Present the result your customers want with clarity and confidence.', button_text: 'Start a conversation', background: '#12343b', overlay_opacity: 50 },
+    portfolio: { title: 'Selected work', content: 'Show the thinking, craft, and measurable result behind the project.', button_text: 'View the story', background: '#271b4f', overlay_opacity: 48 }
+  };
+  function preview() {
+    const cards = list.find('.glidara-slider-slide').map(function () {
+      const title = $(this).find('[name$="[title]"]').val() || 'Untitled slide';
+      const image = $(this).find('[name$="[image]"]').val();
+      const bg = $(this).find('[name$="[background]"]').val() || '#141525';
+      return `<div class="glidara-slider-preview__slide" style="background-color:${bg};${image ? `background-image:url('${image.replace(/'/g, '%27')}')` : ''}"><strong>${$('<div>').text(title).html()}</strong></div>`;
+    }).get();
+    builder.find('.glidara-slider-preview').html(cards.join(''));
+  }
+  function addSlide(preset = {}) {
+    const index = Number(builder.attr('data-next-index') || 0);
+    const slide = $(wp.template('glidara-slider-slide')({ index }));
+    slide.find('> input[name$="[uid]"]').val(uid());
+    Object.entries(preset).forEach(([key, value]) => slide.find(`[name$="[${key}]"]`).val(value));
+    list.append(slide);
+    builder.attr('data-next-index', index + 1);
+    preview();
+  }
+  builder.on('click', '.glidara-slider-add', () => addSlide())
+    .on('click', '.glidara-slider-media', function () {
+      const row = $(this).closest('.glidara-slider-media-row');
+      const frame = wp.media({ title: 'Choose slide image', button: { text: 'Use image' }, multiple: false });
+      frame.on('select', () => {
+        const image = frame.state().get('selection').first().toJSON();
+        row.find('.glidara-slider-image-url').val(image.url).trigger('change');
+        row.find('.glidara-slider-image-id').val(image.id);
+        row.closest('.glidara-slider-fields').find('[name$="[image_alt]"]').val(image.alt || '');
+      });
+      frame.open();
+    })
+    .on('click', '.glidara-slider-remove', function () { $(this).closest('.glidara-slider-slide').remove(); preview(); })
+    .on('click', '.glidara-slider-add-layer', function () {
+      const slide = $(this).closest('.glidara-slider-slide');
+      const slideIndex = slide.index();
+      const layers = slide.find('.glidara-slider-layers');
+      const layerIndex = Number(layers.attr('data-next-layer') || 0);
+      const layer = $(wp.template('glidara-slider-layer')({ slide: slideIndex, layer: layerIndex }));
+      layer.find('input[name$="[uid]"]').val(uid());
+      layers.append(layer).sortable({ handle: '.glidara-slider-layer-handle' });
+      layers.attr('data-next-layer', layerIndex + 1);
+    })
+    .on('click', '.glidara-slider-remove-layer', function () { $(this).closest('.glidara-slider-layer').remove(); })
+    .on('click', '.glidara-slider-device', function () {
+      builder.find('.glidara-slider-device').removeClass('is-active');
+      $(this).addClass('is-active');
+      builder.find('.glidara-slider-preview-wrap').attr('data-device', $(this).data('device'));
+    })
+    .on('change', '.glidara-slider-template', function () {
+      if (templates[this.value]) addSlide(templates[this.value]);
+      this.value = '';
+    })
+    .on('input change', 'input, textarea, select', preview);
+  builder.closest('form').on('submit', () => {
+    list.find('.glidara-slider-slide').each(function (slideIndex) {
+      $(this).find(':input[name^="glidara_slider_slides["]').each(function () {
+        this.name = this.name.replace(/^glidara_slider_slides\[[^\]]+\]/, `glidara_slider_slides[${slideIndex}]`);
+      });
+      $(this).find('.glidara-slider-layer').each(function (layerIndex) {
+        $(this).find(':input').each(function () {
+          this.name = this.name.replace(/\[layers\]\[[^\]]+\]/, `[layers][${layerIndex}]`);
+        });
+      });
+    });
+  });
+  preview();
+});

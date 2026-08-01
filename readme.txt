@@ -26,6 +26,7 @@ Publish with the Glidara block, widget, Classic Editor button, `[glidara_slider 
 == Changelog ==
 
 = 3.0.0 =
+* Added a numbered slide selector that loads one slide editor at a time while preserving drag ordering.
 * Added single-open slide accordions, an automatic visual template chooser and an in-editor responsive preview overlay.
 * Added elegant read-only Pro feature discovery inside Free Slider Settings.
 * Replaced the legacy WordPress post-editor chrome with a full-width Glidara workspace and dedicated Publish/Update controls.

@@ -36,7 +36,7 @@ final class Glidara_Slider_Tools {
 		if ( 'glidara_slider' !== $post->post_type || ! current_user_can( 'edit_post', $post->ID ) ) return $actions;
 		$actions['glidara_duplicate'] = '<a href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=glidara_slider_duplicate&id=' . $post->ID ), 'glidara_duplicate_' . $post->ID ) ) . '">' . esc_html__( 'Duplicate', 'glidara-slider' ) . '</a>';
 		$actions['glidara_export'] = '<a href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=glidara_slider_export&id=' . $post->ID ), 'glidara_export_' . $post->ID ) ) . '">' . esc_html__( 'Export JSON', 'glidara-slider' ) . '</a>';
-		$actions['glidara_preview'] = '<a class="glidara-exact-preview" target="glidara-slider-preview" href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=glidara_slider_preview&id=' . $post->ID ), 'glidara_slider_preview_' . $post->ID ) ) . '">' . esc_html__( 'Live Preview', 'glidara-slider' ) . '</a>';
+		$actions['glidara_preview'] = '<a class="glidara-exact-preview" href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=glidara_slider_preview&id=' . $post->ID ), 'glidara_slider_preview_' . $post->ID ) ) . '">' . esc_html__( 'Live Preview', 'glidara-slider' ) . '</a>';
 		return $actions;
 	}
 
@@ -148,7 +148,7 @@ final class Glidara_Slider_Tools {
 
 	public function classic_button_script() {
 		if ( ! current_user_can( 'edit_posts' ) ) return;
-		?><script>document.getElementById('glidara-insert-shortcode')?.addEventListener('click',function(){const id=window.prompt('<?php echo esc_js( __( 'Enter the slider ID', 'glidara-slider' ) ); ?>');if(id&&/^\d+$/.test(id)){window.send_to_editor('[glidara_slider id="'+id+'"]')}});document.addEventListener('click',function(event){const link=event.target.closest('.glidara-exact-preview');if(!link)return;event.preventDefault();window.open(link.href,'glidara-slider-preview','popup=yes,width=1280,height=820,resizable=yes,scrollbars=yes')});</script><?php
+		?><script>document.getElementById('glidara-insert-shortcode')?.addEventListener('click',function(){const id=window.prompt('<?php echo esc_js( __( 'Enter the slider ID', 'glidara-slider' ) ); ?>');if(id&&/^\d+$/.test(id)){window.send_to_editor('[glidara_slider id="'+id+'"]')}});document.addEventListener('click',function(event){const link=event.target.closest('.glidara-exact-preview');if(!link||document.querySelector('.glidara-preview-modal'))return;event.preventDefault();window.location.href=link.href});</script><?php
 	}
 
 	public function register_block() {

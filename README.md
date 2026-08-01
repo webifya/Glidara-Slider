@@ -4,7 +4,7 @@ The free, open-source slider plugin by Webifya.
 
 Development repository: https://github.com/webifya/Glidara-Slider
 
-## Current milestone: 2.7.0
+## Current milestone: 3.0.0
 
 The WordPress dashboard entry is **Settings → Glidara Slider**. Each slider uses dedicated **Slides**, **Slider Settings**, and **Publish** tabs for a cleaner editing workflow.
 
@@ -22,6 +22,8 @@ The WordPress dashboard entry is **Settings → Glidara Slider**. Each slider us
 - Global accent, text, font and button styles
 - Stable slide identifiers for optional Pro analytics
 - Gutenberg create/edit shortcuts plus wide, full-width and anchor support
+- Inline Slider Health feedback for titles, image alt text and CTA completeness
+- Twelve starter templates spanning business, portfolio, SaaS, hospitality, property and events
 
 ## Roadmap
 

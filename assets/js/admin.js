@@ -36,10 +36,16 @@ jQuery(($) => {
 	}
   function preview() {
     const cards = list.find('.glidara-slider-slide').map(function () {
-      const title = $(this).find('[name$="[title]"]').val() || 'Untitled slide';
-      const image = $(this).find('[name$="[image]"]').val();
-      const bg = $(this).find('[name$="[background]"]').val() || '#141525';
-      return `<div class="glidara-slider-preview__slide" style="background-color:${bg};${image ? `background-image:url('${image.replace(/'/g, '%27')}')` : ''}"><strong>${$('<div>').text(title).html()}</strong></div>`;
+	  const row = $(this);
+      const title = row.find('[name$="[title]"]').val() || 'Untitled slide';
+      const content = row.find('[name$="[content]"]').val() || '';
+      const button = row.find('[name$="[button_text]"]').val() || '';
+      const image = row.find('[name$="[image]"]').val();
+      const bg = row.find('[name$="[background]"]').val() || '#141525';
+	  const opacity = Math.min(100, Number(row.find('[name$="[overlay_opacity]"]').val()) || 0) / 100;
+	  const align = row.find('[name$="[align]"]').val() || 'left';
+	  const safe = (value) => $('<div>').text(value).html();
+      return `<article class="glidara-slider-preview__slide" style="background-color:${bg};${image ? `background-image:url('${image.replace(/'/g, '%27')}')` : ''};text-align:${align}"><span class="glidara-preview-overlay" style="opacity:${opacity}"></span><div class="glidara-preview-content"><strong>${safe(title)}</strong>${content ? `<p>${safe(content)}</p>` : ''}${button ? `<span class="glidara-preview-button">${safe(button)}</span>` : ''}</div></article>`;
     }).get();
     builder.find('.glidara-slider-preview').html(cards.join(''));
 		health();
@@ -54,6 +60,8 @@ jQuery(($) => {
     preview();
   }
   builder.on('click', '.glidara-slider-add', () => addSlide())
+	.on('input', '.glidara-editor-title', function () { $('#title').val(this.value); })
+	.on('click', '.glidara-save-slider', function () { $('#title').val(builder.find('.glidara-editor-title').val()); $('#publish').trigger('click'); })
 	.on('click', '.glidara-editor-tab', function () {
 	  const tab = $(this).data('tab');
 	  builder.find('.glidara-editor-tab').removeClass('is-active').attr('aria-selected', 'false');

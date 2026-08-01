@@ -28,6 +28,8 @@ The WordPress dashboard entry is **GlidaraSlider**. Its dedicated workspace mana
 - Twelve starter templates spanning business, portfolio, SaaS, hospitality, property and events
 - Dedicated top-level management workspace and exact saved-output preview popup
 - Full-width distraction-free editor with Glidara-owned naming, publishing and responsive live canvas controls
+- Single-open slide editing, automatic template onboarding and same-window responsive preview overlay
+- Read-only Pro capability discovery that never exposes paid controls as editable in Free
 
 ## Roadmap
 

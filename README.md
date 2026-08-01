@@ -8,6 +8,8 @@ Development repository: https://github.com/webifya/Glidara-Slider
 
 ## Current milestone: 3.0.0
 
+- Numbered slide selector with focused one-slide editing and drag ordering
+
 The WordPress dashboard entry is **GlidaraSlider**. Its dedicated workspace manages every slider, while each editor uses **Slides**, **Slider Settings**, and **Publish** tabs plus an exact frontend preview popup.
 
 - Unlimited sliders and slides

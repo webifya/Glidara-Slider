@@ -27,6 +27,7 @@ The WordPress dashboard entry is **GlidaraSlider**. Its dedicated workspace mana
 - Inline Slider Health feedback for titles, image alt text and CTA completeness
 - Twelve starter templates spanning business, portfolio, SaaS, hospitality, property and events
 - Dedicated top-level management workspace and exact saved-output preview popup
+- Full-width distraction-free editor with Glidara-owned naming, publishing and responsive live canvas controls
 
 ## Roadmap
 

@@ -9,6 +9,8 @@ License: GPLv2 or later
 
 A fast, responsive WordPress slider builder for images, promotions and carousels—without slowing down your website.
 
+Created by Mahfuzar Rahman at Web Ninja LLC. Learn more at https://webninjallc.com/plugins/glidara
+
 == Description ==
 
 Create unlimited sliders and image slides with drag-and-drop ordering, responsive previews, six layout families, media-library images, accessible navigation, lazy loading and conditional frontend assets.
@@ -24,6 +26,7 @@ Publish with the Glidara block, widget, Classic Editor button, `[glidara_slider 
 == Changelog ==
 
 = 3.0.0 =
+* Added official Mahfuzar Rahman and Web Ninja LLC ownership and product-page metadata.
 * Added an inline Slider Health score for accessibility, content and conversion basics while editing.
 * Expanded the Free starter library to twelve templates, including SaaS, restaurant, real-estate and event designs.
 * Added a stable render pipeline so optional extensions can filter visible slides without replacing Free output.

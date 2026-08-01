@@ -3,9 +3,20 @@ jQuery(($) => {
   const builder = $('#glidara-slider-builder');
 	if (document.querySelector('.glidara-template-modal[data-auto-open="1"]')) document.body.classList.add('glidara-modal-open');
   const uid = () => window.crypto?.randomUUID?.() || `glidara-slider-${Date.now()}-${Math.random().toString(16).slice(2)}`;
-  const list = builder.find('.glidara-slider-slides').sortable({ handle: '.glidara-slider-handle', update: preview });
-	const openSlide = (slide) => { list.find('.glidara-slider-slide').removeClass('is-open'); $(slide).addClass('is-open'); };
+	const rebuildSlideSelector = (selected) => {
+	  const selector = builder.find('.glidara-slide-selector').empty();
+	  list.find('.glidara-slider-slide').each(function (index) {
+		const title = $(this).find('[name$="[title]"]').val();
+		$(this).attr('data-slide-position', index).find('.glidara-slide-number').text(`Slide ${index + 1}`);
+		$(this).find('.glidara-slide-summary').text(title || 'Untitled');
+		selector.append($('<option>', { value: index, text: `Slide ${index + 1}${title ? ` — ${title}` : ''}` }));
+	  });
+	  if (selected !== undefined) selector.val(String(selected));
+	};
+	const openSlide = (slide) => { const row = $(slide); list.find('.glidara-slider-slide').removeClass('is-open'); row.addClass('is-open'); rebuildSlideSelector(row.index()); };
+  const list = builder.find('.glidara-slider-slides').sortable({ handle: '.glidara-slider-handle', update() { openSlide(list.find('.glidara-slider-slide.is-open')); preview(); } });
 	if (list.find('.glidara-slider-slide').length) openSlide(list.find('.glidara-slider-slide').first());
+	else rebuildSlideSelector();
   builder.find('.glidara-slider-layers').sortable({ handle: '.glidara-slider-layer-handle' });
   const templates = {
     hero: { title: 'Ideas that move people', content: 'Create a bold first impression with focused copy and elegant motion.', button_text: 'Explore Glidara', background: '#17152e', overlay_opacity: 55 },
@@ -52,7 +63,8 @@ jQuery(($) => {
     preview();
   }
   builder.on('click', '.glidara-slider-add', () => addSlide())
-	.on('click', '.glidara-slider-handle', function (event) { if ($(event.target).closest('button,a').length) return; const slide = $(this).closest('.glidara-slider-slide'); if (slide.hasClass('is-open')) slide.removeClass('is-open'); else openSlide(slide); })
+	.on('change', '.glidara-slide-selector', function () { openSlide(list.find('.glidara-slider-slide').eq(Number(this.value))); })
+	.on('click', '.glidara-slider-handle', function (event) { if ($(event.target).closest('button,a').length) return; openSlide($(this).closest('.glidara-slider-slide')); })
 	.on('focusin click', '.glidara-slider-fields', function () { openSlide($(this).closest('.glidara-slider-slide')); })
 	.on('input', '.glidara-editor-title', function () { $('#title').val(this.value); })
 	.on('click', '.glidara-save-slider', function () { $('#title').val(builder.find('.glidara-editor-title').val()); $('#publish').trigger('click'); })
@@ -81,7 +93,7 @@ jQuery(($) => {
       });
       frame.open();
     })
-    .on('click', '.glidara-slider-remove', function () { $(this).closest('.glidara-slider-slide').remove(); preview(); })
+	.on('click', '.glidara-slider-remove', function () { const row = $(this).closest('.glidara-slider-slide'); const next = row.next().length ? row.next() : row.prev(); row.remove(); if (next.length) openSlide(next); else rebuildSlideSelector(); preview(); })
     .on('click', '.glidara-slider-duplicate', function () {
       const original = $(this).closest('.glidara-slider-slide');
       const copy = original.clone(false, false);
@@ -112,7 +124,7 @@ jQuery(($) => {
       if (templates[this.value]) addSlide(templates[this.value]);
       this.value = '';
     })
-    .on('input change', 'input, textarea, select', preview);
+    .on('input change', 'input, textarea, select', function () { preview(); if ($(this).is('[name$="[title]"]')) rebuildSlideSelector($(this).closest('.glidara-slider-slide').index()); });
 	document.addEventListener('click', (event) => {
 	  const previewLink = event.target.closest('.glidara-exact-preview');
 	  if (previewLink) {

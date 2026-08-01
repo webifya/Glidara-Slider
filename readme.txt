@@ -26,6 +26,8 @@ Publish with the Glidara block, widget, Classic Editor button, `[glidara_slider 
 == Changelog ==
 
 = 3.0.0 =
+* Added a dedicated GlidaraSlider dashboard workspace and exact frontend preview popup.
+* Removed the Create New Slider Plugins-screen action and improved the plugin description.
 * Added official Mahfuzar Rahman and Web Ninja LLC ownership and product-page metadata.
 * Added an inline Slider Health score for accessibility, content and conversion basics while editing.
 * Expanded the Free starter library to twelve templates, including SaaS, restaurant, real-estate and event designs.

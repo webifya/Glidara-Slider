@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Glidara Slider
  * Plugin URI: https://webninjallc.com/plugins/glidara
- * Description: A fast, responsive slider builder with images, text, video, HTML and shortcodes.
+ * Description: Create fast, accessible, responsive sliders and carousels with live editing—without slowing down your WordPress site.
  * Version: 3.0.0
  * Author: Mahfuzar Rahman
  * Author URI: https://webninjallc.com

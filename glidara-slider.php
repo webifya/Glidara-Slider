@@ -1,9 +1,11 @@
 <?php
 /**
  * Plugin Name: Glidara Slider
+ * Plugin URI: https://webninjallc.com/plugins/glidara
  * Description: A fast, responsive slider builder with images, text, video, HTML and shortcodes.
  * Version: 3.0.0
- * Author: Webifya
+ * Author: Mahfuzar Rahman
+ * Author URI: https://webninjallc.com
  * License: GPL-2.0-or-later
  * Text Domain: glidara-slider
  */

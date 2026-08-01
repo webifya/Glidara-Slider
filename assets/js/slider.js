@@ -7,7 +7,8 @@ document.querySelectorAll('.glidara-slider').forEach((root) => {
   if (!slides.length) return;
   const updateItems = () => {
     const carousel = ['carousel', 'logo'].includes(settings.layout_type);
-    items = carousel ? (innerWidth <= 600 ? 1 : innerWidth <= 1024 ? Math.min(2, Number(settings.slides_per_view) || 1) : Number(settings.slides_per_view) || 1) : 1;
+	items = carousel ? (innerWidth <= 600 ? Number(settings.mobile_slides) || 1 : innerWidth <= 1024 ? Number(settings.tablet_slides) || 2 : Number(settings.slides_per_view) || 1) : 1;
+	items = Math.max(1, Math.min(items, slides.length));
     if (settings.direction === 'vertical') items = 1;
     root.style.setProperty('--glidara-items', items);
     root.style.setProperty('--glidara-step', `${100 / items}%`);
@@ -40,6 +41,6 @@ document.querySelectorAll('.glidara-slider').forEach((root) => {
   let resizeTimer;
   addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { updateItems(); show(current); }, 120); });
   updateItems();
-  show(settings.random_start ? Math.floor(Math.random() * (lastIndex() + 1)) : 0);
+	show(settings.random_start ? Math.floor(Math.random() * (lastIndex() + 1)) : Math.max(0, Number(settings.start_slide || 1) - 1));
   play();
 });

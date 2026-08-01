@@ -32,7 +32,7 @@ final class Glidara_Slider_Plugin {
 	public function go_pro_page() {
 		if ( ! current_user_can( 'manage_options' ) ) return;
 		$is_pro = class_exists( 'Glidara_Slider_Pro' );
-		$purchase_url = esc_url( apply_filters( 'glidara_slider_pro_url', 'http://webninjallc.com/plugins/glidara' ) );
+		$purchase_url = esc_url( apply_filters( 'glidara_slider_pro_url', 'https://webninjallc.com/plugins/glidara' ) );
 		?>
 		<div class="wrap glidara-pro-page">
 			<div class="glidara-brand"><span class="glidara-brand__mark">G</span><div><h1><?php esc_html_e( 'Glidara Slider Pro', 'glidara-slider' ); ?></h1><p><?php esc_html_e( 'Build dynamic, measurable sliders without turning your site into a heavy design suite.', 'glidara-slider' ); ?></p></div></div>

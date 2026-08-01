@@ -313,8 +313,10 @@ final class Glidara_Slider_Plugin {
 		if ( in_array( $hook, array( 'post.php', 'post-new.php' ), true ) && 'glidara_slider' === get_current_screen()->post_type ) {
 			wp_enqueue_script( 'jquery-ui-sortable' );
 			wp_enqueue_media();
-			wp_enqueue_script( 'glidara-slider-admin', GLIDARA_SLIDER_URL . 'assets/js/admin.js', array( 'jquery', 'jquery-ui-sortable', 'wp-util' ), GLIDARA_SLIDER_VERSION, true );
-			wp_enqueue_style( 'glidara-slider-admin', GLIDARA_SLIDER_URL . 'assets/css/admin.css', array(), GLIDARA_SLIDER_VERSION );
+			$editor_asset_version = GLIDARA_SLIDER_VERSION . '-editor-2';
+			wp_enqueue_script( 'glidara-slider-admin', GLIDARA_SLIDER_URL . 'assets/js/admin.js', array( 'jquery', 'jquery-ui-sortable', 'wp-util' ), $editor_asset_version, true );
+			wp_enqueue_style( 'glidara-slider-admin', GLIDARA_SLIDER_URL . 'assets/css/admin.css', array(), $editor_asset_version );
+			wp_enqueue_style( 'glidara-slider-editor-shell', GLIDARA_SLIDER_URL . 'assets/css/editor-shell.css', array( 'glidara-slider-admin' ), $editor_asset_version );
 			if ( apply_filters( 'glidara_slider_layers_enabled', false ) ) wp_enqueue_style( 'glidara-slider-admin-layers', GLIDARA_SLIDER_URL . 'assets/css/admin-layers.css', array( 'glidara-slider-admin' ), GLIDARA_SLIDER_VERSION );
 		}
 	}

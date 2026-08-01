@@ -29,7 +29,9 @@ Publish with the Glidara block, widget, Classic Editor button, `[glidara_slider 
 * Added standard, carousel, thumbnail, logo and testimonial layouts, with full-width and device-specific controls.
 * Added duplicate slide/slider, link targets, responsive item counts, start slide, mobile height, image-fit, random start, stop-on-last-slide and hover navigation.
 * Added numbered/thumbnail pagination, arrow styles and positions, semantic heading selection, text sizing and independent button/caption colors.
+* Added distinct image title, description and caption metadata with Media Library autofill and caption placement controls.
 * Added Gutenberg block, Classic Editor button, widget, PHP helper, JSON import/export and uninstall retention controls.
+* Added one-click settings reset, unlimited-slide JSON migration and minified conditional frontend assets.
 * Added Tools & Health diagnostics for missing alt text, empty slides, environment information and debug preferences.
 
 = 0.2.0 =

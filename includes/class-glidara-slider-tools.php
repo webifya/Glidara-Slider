@@ -145,7 +145,11 @@ final class Glidara_Slider_Tools {
 		wp_register_script( 'glidara-slider-block', GLIDARA_SLIDER_URL . 'blocks/slider/index.js', array( 'wp-blocks', 'wp-element', 'wp-components', 'wp-block-editor' ), GLIDARA_SLIDER_VERSION, true );
 		$choices = array( array( 'label' => __( 'Choose a slider', 'glidara-slider' ), 'value' => 0 ) );
 		foreach ( get_posts( array( 'post_type' => 'glidara_slider', 'post_status' => 'publish', 'numberposts' => -1 ) ) as $slider ) $choices[] = array( 'label' => $slider->post_title, 'value' => $slider->ID );
-		wp_localize_script( 'glidara-slider-block', 'glidaraSliderBlock', array( 'choices' => $choices ) );
+		wp_localize_script( 'glidara-slider-block', 'glidaraSliderBlock', array(
+			'choices'  => $choices,
+			'createUrl' => current_user_can( 'edit_posts' ) ? admin_url( 'post-new.php?post_type=glidara_slider' ) : '',
+			'editBase'  => current_user_can( 'edit_posts' ) ? admin_url( 'post.php?action=edit&post=' ) : '',
+		) );
 		register_block_type( GLIDARA_SLIDER_DIR . 'blocks/slider', array( 'render_callback' => array( $this, 'render_block' ) ) );
 	}
 

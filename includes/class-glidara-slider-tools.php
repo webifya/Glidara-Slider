@@ -16,6 +16,7 @@ final class Glidara_Slider_Tools {
 		add_action( 'admin_post_glidara_slider_duplicate', array( $this, 'duplicate_slider' ) );
 		add_action( 'admin_post_glidara_slider_export', array( $this, 'export_slider' ) );
 		add_action( 'admin_post_glidara_slider_import', array( $this, 'import_slider' ) );
+		add_action( 'admin_post_glidara_slider_preview', array( $this, 'preview_slider' ) );
 		add_action( 'admin_menu', array( $this, 'admin_menu' ), 20 );
 		add_action( 'admin_init', array( $this, 'settings' ) );
 		add_action( 'media_buttons', array( $this, 'classic_button' ) );
@@ -25,9 +26,9 @@ final class Glidara_Slider_Tools {
 	}
 
 	public function plugin_links( $links ) {
-		$create = '<a href="' . esc_url( admin_url( 'post-new.php?post_type=glidara_slider' ) ) . '"><strong>' . esc_html__( 'Create New Slider', 'glidara-slider' ) . '</strong></a>';
-		$pro = '<a style="color:#6d5dfc;font-weight:700" href="' . esc_url( admin_url( 'options-general.php?page=glidara-slider-go-pro' ) ) . '">' . esc_html__( 'Go Pro', 'glidara-slider' ) . '</a>';
-		array_unshift( $links, $create, $pro );
+		if ( class_exists( 'Glidara_Slider_Pro' ) ) return $links;
+		$pro = '<a style="color:#6d5dfc;font-weight:700" href="' . esc_url( admin_url( 'edit.php?post_type=glidara_slider&page=glidara-slider-go-pro' ) ) . '">' . esc_html__( 'Go Pro', 'glidara-slider' ) . '</a>';
+		array_unshift( $links, $pro );
 		return $links;
 	}
 
@@ -35,7 +36,16 @@ final class Glidara_Slider_Tools {
 		if ( 'glidara_slider' !== $post->post_type || ! current_user_can( 'edit_post', $post->ID ) ) return $actions;
 		$actions['glidara_duplicate'] = '<a href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=glidara_slider_duplicate&id=' . $post->ID ), 'glidara_duplicate_' . $post->ID ) ) . '">' . esc_html__( 'Duplicate', 'glidara-slider' ) . '</a>';
 		$actions['glidara_export'] = '<a href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=glidara_slider_export&id=' . $post->ID ), 'glidara_export_' . $post->ID ) ) . '">' . esc_html__( 'Export JSON', 'glidara-slider' ) . '</a>';
+		$actions['glidara_preview'] = '<a class="glidara-exact-preview" href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=glidara_slider_preview&id=' . $post->ID ), 'glidara_slider_preview_' . $post->ID ) ) . '">' . esc_html__( 'Live Preview', 'glidara-slider' ) . '</a>';
 		return $actions;
+	}
+
+	public function preview_slider() {
+		$id = absint( $_GET['id'] ?? 0 );
+		if ( ! $id || ! current_user_can( 'edit_post', $id ) || ! check_admin_referer( 'glidara_slider_preview_' . $id ) ) wp_die( esc_html__( 'Invalid preview request.', 'glidara-slider' ) );
+		do_action( 'wp_enqueue_scripts' );
+		$content = do_shortcode( '[glidara_slider id="' . $id . '"]' );
+		?><!doctype html><html <?php language_attributes(); ?>><head><meta charset="<?php bloginfo( 'charset' ); ?>"><meta name="viewport" content="width=device-width,initial-scale=1"><title><?php echo esc_html( sprintf( __( '%s — Live Preview', 'glidara-slider' ), get_the_title( $id ) ) ); ?></title><?php wp_head(); ?><style>html,body{margin:0;min-height:100%;background:#eef1f7}.glidara-preview-shell{padding:36px}.glidara-preview-bar{align-items:center;color:#475467;display:flex;font:600 13px system-ui;justify-content:space-between;margin:0 auto 14px;max-width:1400px}.glidara-preview-bar strong{color:#101828;font-size:15px}@media(max-width:600px){.glidara-preview-shell{padding:12px}}</style></head><body><main class="glidara-preview-shell"><div class="glidara-preview-bar"><strong><?php echo esc_html( get_the_title( $id ) ); ?></strong><span><?php esc_html_e( 'Exact saved frontend output', 'glidara-slider' ); ?></span></div><?php echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></main><?php wp_footer(); ?></body></html><?php exit;
 	}
 
 	public function duplicate_slider() {
@@ -95,7 +105,7 @@ final class Glidara_Slider_Tools {
 	}
 
 	public function admin_menu() {
-		add_submenu_page( 'options-general.php', __( 'Glidara Tools & Health', 'glidara-slider' ), __( 'Glidara Slider — Tools', 'glidara-slider' ), 'manage_options', 'glidara-slider-tools', array( $this, 'tools_page' ) );
+		add_submenu_page( 'edit.php?post_type=glidara_slider', __( 'Glidara Tools & Health', 'glidara-slider' ), __( 'Tools & Health', 'glidara-slider' ), 'manage_options', 'glidara-slider-tools', array( $this, 'tools_page' ) );
 	}
 
 	public function settings() {
@@ -138,7 +148,7 @@ final class Glidara_Slider_Tools {
 
 	public function classic_button_script() {
 		if ( ! current_user_can( 'edit_posts' ) ) return;
-		?><script>document.getElementById('glidara-insert-shortcode')?.addEventListener('click',function(){const id=window.prompt('<?php echo esc_js( __( 'Enter the slider ID', 'glidara-slider' ) ); ?>');if(id&&/^\d+$/.test(id)){window.send_to_editor('[glidara_slider id="'+id+'"]')}});</script><?php
+		?><script>document.getElementById('glidara-insert-shortcode')?.addEventListener('click',function(){const id=window.prompt('<?php echo esc_js( __( 'Enter the slider ID', 'glidara-slider' ) ); ?>');if(id&&/^\d+$/.test(id)){window.send_to_editor('[glidara_slider id="'+id+'"]')}});document.addEventListener('click',function(event){const link=event.target.closest('.glidara-exact-preview');if(!link||document.querySelector('.glidara-preview-modal'))return;event.preventDefault();window.location.href=link.href});</script><?php
 	}
 
 	public function register_block() {

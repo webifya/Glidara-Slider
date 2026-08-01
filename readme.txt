@@ -4,10 +4,12 @@ Tags: slider, carousel, image slider, responsive slider
 Requires at least: 6.2
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 2.7.0
+Stable tag: 3.0.0
 License: GPLv2 or later
 
 A fast, responsive WordPress slider builder for images, promotions and carousels—without slowing down your website.
+
+Created by Mahfuzar Rahman at Web Ninja LLC. Learn more at https://webninjallc.com/plugins/glidara
 
 == Description ==
 
@@ -22,6 +24,19 @@ Publish with the Glidara block, widget, Classic Editor button, `[glidara_slider 
 3. Open Sliders > Add New.
 
 == Changelog ==
+
+= 3.0.0 =
+* Added a numbered slide selector that loads one slide editor at a time while preserving drag ordering.
+* Added single-open slide accordions, an automatic visual template chooser and an in-editor responsive preview overlay.
+* Added elegant read-only Pro feature discovery inside Free Slider Settings.
+* Replaced the legacy WordPress post-editor chrome with a full-width Glidara workspace and dedicated Publish/Update controls.
+* Rebuilt responsive live preview rendering and isolated third-party editor meta boxes.
+* Added a dedicated GlidaraSlider dashboard workspace and exact frontend preview popup.
+* Removed the Create New Slider Plugins-screen action and improved the plugin description.
+* Added official Mahfuzar Rahman and Web Ninja LLC ownership and product-page metadata.
+* Added an inline Slider Health score for accessibility, content and conversion basics while editing.
+* Expanded the Free starter library to twelve templates, including SaaS, restaurant, real-estate and event designs.
+* Added a stable render pipeline so optional extensions can filter visible slides without replacing Free output.
 
 = 2.7.0 =
 * Improved the Gutenberg block with published-slider status, create/edit shortcuts and clearer editor guidance.

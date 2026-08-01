@@ -18,6 +18,7 @@ final class Glidara_Slider_Plugin {
 		add_action( 'save_post_glidara_slider', array( $this, 'save_slider' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_assets' ) );
 		add_action( 'admin_menu', array( $this, 'admin_menu' ) );
+		add_action( 'admin_notices', array( $this, 'management_header' ) );
 		add_action( 'admin_post_glidara_slider_reset_settings', array( $this, 'reset_settings' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'register_frontend_assets' ) );
 		add_shortcode( 'glidara_slider', array( $this, 'shortcode' ) );
@@ -26,13 +27,20 @@ final class Glidara_Slider_Plugin {
 	}
 
 	public function admin_menu() {
-		add_submenu_page( 'options-general.php', __( 'Glidara Slider Pro', 'glidara-slider' ), __( 'Glidara Slider — Go Pro', 'glidara-slider' ), 'manage_options', 'glidara-slider-go-pro', array( $this, 'go_pro_page' ) );
+		if ( ! class_exists( 'Glidara_Slider_Pro' ) ) add_submenu_page( 'edit.php?post_type=glidara_slider', __( 'Glidara Slider Pro', 'glidara-slider' ), __( 'Go Pro', 'glidara-slider' ), 'manage_options', 'glidara-slider-go-pro', array( $this, 'go_pro_page' ) );
+	}
+
+	public function management_header() {
+		$screen = get_current_screen();
+		if ( ! $screen || 'edit-glidara_slider' !== $screen->id ) return;
+		$count = wp_count_posts( 'glidara_slider' );
+		?><div class="glidara-manage-hero"><div><span class="glidara-eyebrow"><?php esc_html_e( 'Glidara workspace', 'glidara-slider' ); ?></span><h1><?php esc_html_e( 'Create, manage and preview every slider', 'glidara-slider' ); ?></h1><p><?php esc_html_e( 'Build responsive campaigns, open an exact live preview, and publish with a shortcode or block.', 'glidara-slider' ); ?></p></div><div class="glidara-manage-stats"><strong><?php echo absint( $count->publish + $count->draft ); ?></strong><span><?php esc_html_e( 'total sliders', 'glidara-slider' ); ?></span><a class="button button-primary" href="<?php echo esc_url( admin_url( 'post-new.php?post_type=glidara_slider' ) ); ?>"><?php esc_html_e( 'Add New Slider', 'glidara-slider' ); ?></a></div></div><?php
 	}
 
 	public function go_pro_page() {
 		if ( ! current_user_can( 'manage_options' ) ) return;
 		$is_pro = class_exists( 'Glidara_Slider_Pro' );
-		$purchase_url = esc_url( apply_filters( 'glidara_slider_pro_url', 'http://webninjallc.com/plugins/glidara' ) );
+		$purchase_url = esc_url( apply_filters( 'glidara_slider_pro_url', 'https://webninjallc.com/plugins/glidara' ) );
 		?>
 		<div class="wrap glidara-pro-page">
 			<div class="glidara-brand"><span class="glidara-brand__mark">G</span><div><h1><?php esc_html_e( 'Glidara Slider Pro', 'glidara-slider' ); ?></h1><p><?php esc_html_e( 'Build dynamic, measurable sliders without turning your site into a heavy design suite.', 'glidara-slider' ); ?></p></div></div>
@@ -47,16 +55,17 @@ final class Glidara_Slider_Plugin {
 			'glidara_slider',
 			array(
 				'labels' => array(
-					'name'          => __( 'Glidara Slider', 'glidara-slider' ),
+					'name'          => __( 'GlidaraSlider', 'glidara-slider' ),
 					'singular_name' => __( 'Slider', 'glidara-slider' ),
-					'menu_name'     => __( 'Glidara Slider', 'glidara-slider' ),
-					'all_items'     => __( 'Glidara Slider', 'glidara-slider' ),
+					'menu_name'     => __( 'GlidaraSlider', 'glidara-slider' ),
+					'all_items'     => __( 'Manage Sliders', 'glidara-slider' ),
+					'add_new'       => __( 'Add Slider', 'glidara-slider' ),
 					'add_new_item'  => __( 'Add New Slider', 'glidara-slider' ),
 					'edit_item'     => __( 'Edit Slider', 'glidara-slider' ),
 				),
 				'public'       => false,
 				'show_ui'      => true,
-				'show_in_menu' => 'options-general.php',
+				'show_in_menu' => true,
 				'menu_icon'    => 'dashicons-images-alt2',
 				'supports'     => array( 'title', 'revisions' ),
 				'show_in_rest' => true,
@@ -74,22 +83,23 @@ final class Glidara_Slider_Plugin {
 		$slides = is_array( $slides ) ? $slides : array();
 		?>
 		<div id="glidara-slider-builder" data-next-index="<?php echo esc_attr( count( $slides ) ); ?>">
-			<div class="glidara-builder-hero"><div class="glidara-brand"><span class="glidara-brand__mark">G</span><div><strong><?php esc_html_e( 'Glidara', 'glidara-slider' ); ?></strong><span><?php esc_html_e( 'Visual Slider Builder', 'glidara-slider' ); ?></span></div></div><div class="glidara-save-hint"><span class="dashicons dashicons-saved"></span><?php esc_html_e( 'Your design is saved with the WordPress Update button.', 'glidara-slider' ); ?></div></div>
+			<div class="glidara-builder-hero"><div class="glidara-brand"><span class="glidara-brand__mark">G</span><div><strong><?php esc_html_e( 'Glidara', 'glidara-slider' ); ?></strong><span><?php esc_html_e( 'Visual Slider Builder', 'glidara-slider' ); ?></span></div></div><label class="glidara-title-control"><span><?php esc_html_e( 'Slider name', 'glidara-slider' ); ?></span><input class="glidara-editor-title" type="text" value="<?php echo esc_attr( $post->post_title ); ?>" placeholder="<?php esc_attr_e( 'Untitled slider', 'glidara-slider' ); ?>"></label><div class="glidara-builder-actions"><span class="glidara-save-state"><i></i><?php echo 'publish' === $post->post_status ? esc_html__( 'Published', 'glidara-slider' ) : esc_html__( 'Draft', 'glidara-slider' ); ?></span><a class="button glidara-exact-preview" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=glidara_slider_preview&id=' . absint( $post->ID ) ), 'glidara_slider_preview_' . absint( $post->ID ) ) ); ?>" target="glidara-slider-preview"><?php esc_html_e( 'Exact Preview', 'glidara-slider' ); ?></a><button type="button" class="button button-primary glidara-save-slider"><?php echo 'publish' === $post->post_status ? esc_html__( 'Update Slider', 'glidara-slider' ) : esc_html__( 'Publish Slider', 'glidara-slider' ); ?></button></div></div>
 			<nav class="glidara-editor-tabs" aria-label="<?php esc_attr_e( 'Slider editor sections', 'glidara-slider' ); ?>"><button type="button" class="glidara-editor-tab is-active" data-tab="slides" aria-selected="true"><span class="dashicons dashicons-images-alt2"></span><?php esc_html_e( 'Slides', 'glidara-slider' ); ?></button><button type="button" class="glidara-editor-tab" data-tab="settings" aria-selected="false"><span class="dashicons dashicons-admin-generic"></span><?php esc_html_e( 'Slider Settings', 'glidara-slider' ); ?></button><button type="button" class="glidara-editor-tab" data-tab="publish" aria-selected="false"><span class="dashicons dashicons-share"></span><?php esc_html_e( 'Publish', 'glidara-slider' ); ?></button></nav>
 			<section class="glidara-editor-panel is-active" data-panel="slides">
-			<div class="glidara-slider-toolbar"><p><?php esc_html_e( 'Drag slides to reorder them. Changes appear in the preview immediately.', 'glidara-slider' ); ?></p><div><strong><?php esc_html_e( 'Preview:', 'glidara-slider' ); ?></strong> <button type="button" class="button glidara-slider-device is-active" data-device="desktop"><?php esc_html_e( 'Desktop', 'glidara-slider' ); ?></button> <button type="button" class="button glidara-slider-device" data-device="tablet"><?php esc_html_e( 'Tablet', 'glidara-slider' ); ?></button> <button type="button" class="button glidara-slider-device" data-device="mobile"><?php esc_html_e( 'Mobile', 'glidara-slider' ); ?></button></div></div>
+			<div class="glidara-slider-toolbar"><label class="glidara-slide-picker"><span><?php esc_html_e( 'Editing', 'glidara-slider' ); ?></span><select class="glidara-slide-selector" aria-label="<?php esc_attr_e( 'Select slide to edit', 'glidara-slider' ); ?>"></select></label><p><?php esc_html_e( 'Choose a numbered slide to load its details. Drag the active card to reorder.', 'glidara-slider' ); ?></p><div class="glidara-editor-health" aria-live="polite"><span class="dashicons dashicons-heart"></span><strong>100</strong><small><?php esc_html_e( 'Slider health', 'glidara-slider' ); ?></small></div></div>
 			<div class="glidara-slider-slides">
 				<?php foreach ( $slides as $index => $slide ) : ?>
 					<?php $this->slide_editor( $index, $slide ); ?>
 				<?php endforeach; ?>
 			</div>
-			<button type="button" class="button button-primary glidara-slider-add"><?php esc_html_e( 'Add Slide', 'glidara-slider' ); ?></button>
-			<select class="glidara-slider-template"><option value=""><?php esc_html_e( 'Insert starter template…', 'glidara-slider' ); ?></option><?php foreach ( array( 'hero' => 'Hero Slider', 'gallery' => 'Image Gallery', 'business' => 'Business Slider', 'portfolio' => 'Portfolio Slider', 'logo' => 'Logo Carousel', 'testimonial' => 'Testimonial', 'promo' => 'Promotion', 'editorial' => 'Editorial' ) as $value => $label ) : ?><option value="<?php echo esc_attr( $value ); ?>"><?php echo esc_html( $label ); ?></option><?php endforeach; ?></select>
-			<div class="glidara-slider-preview-wrap" data-device="desktop"><div class="glidara-slider-preview" aria-live="polite"></div></div>
+			<button type="button" class="button button-primary glidara-slider-add"><span class="dashicons dashicons-plus-alt2"></span><?php esc_html_e( 'Add Slide', 'glidara-slider' ); ?></button>
+			<select class="glidara-slider-template"><option value=""><?php esc_html_e( 'Insert starter template…', 'glidara-slider' ); ?></option><?php foreach ( array( 'hero' => 'Hero Slider', 'gallery' => 'Image Gallery', 'business' => 'Business Slider', 'portfolio' => 'Portfolio Slider', 'logo' => 'Logo Carousel', 'testimonial' => 'Testimonial', 'promo' => 'Promotion', 'editorial' => 'Editorial', 'saas' => 'SaaS Launch', 'restaurant' => 'Restaurant', 'realestate' => 'Real Estate', 'event' => 'Event Promotion' ) as $value => $label ) : ?><option value="<?php echo esc_attr( $value ); ?>"><?php echo esc_html( $label ); ?></option><?php endforeach; ?></select>
 			</section>
 			<section class="glidara-editor-panel" data-panel="settings"><?php $this->settings_box( $post ); ?></section>
-			<section class="glidara-editor-panel" data-panel="publish"><div class="glidara-publish-grid"><article><span class="dashicons dashicons-shortcode"></span><h3><?php esc_html_e( 'Shortcode', 'glidara-slider' ); ?></h3><code>[glidara_slider id="<?php echo (int) $post->ID; ?>"]</code><button type="button" class="button glidara-copy-code" data-copy='[glidara_slider id="<?php echo (int) $post->ID; ?>"]'><?php esc_html_e( 'Copy shortcode', 'glidara-slider' ); ?></button></article><article><span class="dashicons dashicons-block-default"></span><h3><?php esc_html_e( 'Gutenberg', 'glidara-slider' ); ?></h3><p><?php esc_html_e( 'Add the Glidara Slider block and select this slider.', 'glidara-slider' ); ?></p></article><article><span class="dashicons dashicons-editor-code"></span><h3><?php esc_html_e( 'Theme template', 'glidara-slider' ); ?></h3><code>glidara_slider( <?php echo (int) $post->ID; ?> );</code></article></div></section>
+			<section class="glidara-editor-panel" data-panel="publish"><div class="glidara-publish-grid"><article><span class="dashicons dashicons-shortcode"></span><h3><?php esc_html_e( 'Shortcode', 'glidara-slider' ); ?></h3><code>[glidara_slider id="<?php echo (int) $post->ID; ?>"]</code><button type="button" class="button glidara-copy-code" data-copy='[glidara_slider id="<?php echo (int) $post->ID; ?>"]'><?php esc_html_e( 'Copy shortcode', 'glidara-slider' ); ?></button></article><article><span class="dashicons dashicons-block-default"></span><h3><?php esc_html_e( 'Gutenberg', 'glidara-slider' ); ?></h3><p><?php esc_html_e( 'Add the Glidara Slider block and select this slider.', 'glidara-slider' ); ?></p></article><article><span class="dashicons dashicons-editor-code"></span><h3><?php esc_html_e( 'Theme template', 'glidara-slider' ); ?></h3><code>glidara_slider( <?php echo (int) $post->ID; ?> );</code></article><?php do_action( 'glidara_slider_publish_panel', $post ); ?></div></section>
 		</div>
+		<div class="glidara-modal glidara-preview-modal" hidden><div class="glidara-modal__backdrop" data-close-modal></div><section class="glidara-modal__dialog glidara-preview-dialog" role="dialog" aria-modal="true" aria-label="<?php esc_attr_e( 'Slider preview', 'glidara-slider' ); ?>"><header><div><span class="glidara-eyebrow"><?php esc_html_e( 'Saved frontend output', 'glidara-slider' ); ?></span><h2><?php esc_html_e( 'Exact Preview', 'glidara-slider' ); ?></h2></div><div class="glidara-preview-devices"><button type="button" class="button is-active" data-preview-width="100%"><?php esc_html_e( 'Desktop', 'glidara-slider' ); ?></button><button type="button" class="button" data-preview-width="768px"><?php esc_html_e( 'Tablet', 'glidara-slider' ); ?></button><button type="button" class="button" data-preview-width="390px"><?php esc_html_e( 'Mobile', 'glidara-slider' ); ?></button></div><button type="button" class="button glidara-modal-close" data-close-modal aria-label="<?php esc_attr_e( 'Close preview', 'glidara-slider' ); ?>">×</button></header><div class="glidara-preview-stage"><iframe title="<?php esc_attr_e( 'Slider frontend preview', 'glidara-slider' ); ?>"></iframe></div></section></div>
+		<?php if ( empty( $slides ) ) : ?><div class="glidara-modal glidara-template-modal" data-auto-open="1"><div class="glidara-modal__backdrop" data-close-modal></div><section class="glidara-modal__dialog glidara-template-dialog" role="dialog" aria-modal="true" aria-label="<?php esc_attr_e( 'Choose a slider template', 'glidara-slider' ); ?>"><header><div><span class="glidara-eyebrow"><?php esc_html_e( 'Start beautifully', 'glidara-slider' ); ?></span><h2><?php esc_html_e( 'Choose a starting point', 'glidara-slider' ); ?></h2><p><?php esc_html_e( 'Every template remains fully editable. Choose Blank to begin from scratch.', 'glidara-slider' ); ?></p></div><button type="button" class="button glidara-modal-close" data-close-modal>×</button></header><div class="glidara-template-grid"><button type="button" class="glidara-template-card is-blank" data-template=""><i>+</i><strong><?php esc_html_e( 'Blank slider', 'glidara-slider' ); ?></strong><span><?php esc_html_e( 'Build from an empty slide', 'glidara-slider' ); ?></span></button><?php foreach ( array( 'hero' => array( 'Hero', '#35258b' ), 'business' => array( 'Business', '#12343b' ), 'portfolio' => array( 'Portfolio', '#271b4f' ), 'testimonial' => array( 'Testimonial', '#34235f' ), 'promo' => array( 'Promotion', '#7f1d3f' ), 'saas' => array( 'SaaS', '#5142bd' ), 'restaurant' => array( 'Restaurant', '#512b24' ), 'realestate' => array( 'Real Estate', '#183b45' ), 'event' => array( 'Event', '#561943' ) ) as $key => $template ) : ?><button type="button" class="glidara-template-card" data-template="<?php echo esc_attr( $key ); ?>" style="--template-color:<?php echo esc_attr( $template[1] ); ?>"><i></i><strong><?php echo esc_html( $template[0] ); ?></strong><span><?php esc_html_e( 'Editable responsive design', 'glidara-slider' ); ?></span></button><?php endforeach; ?></div></section></div><?php endif; ?>
 		<script type="text/html" id="tmpl-glidara-slider-slide"><?php $this->slide_editor( '{{data.index}}', array() ); ?></script>
 		<script type="text/html" id="tmpl-glidara-slider-layer"><?php $this->layer_editor( '{{data.slide}}', '{{data.layer}}', array() ); ?></script>
 		<?php
@@ -101,7 +111,7 @@ final class Glidara_Slider_Plugin {
 		?>
 		<div class="glidara-slider-slide">
 			<input type="hidden" name="<?php echo esc_attr( $name ); ?>[uid]" value="<?php echo esc_attr( $slide['uid'] ); ?>">
-			<div class="glidara-slider-handle"><span class="dashicons dashicons-move"></span> <?php esc_html_e( 'Slide', 'glidara-slider' ); ?> <button type="button" class="button-link glidara-slider-duplicate"><?php esc_html_e( 'Duplicate', 'glidara-slider' ); ?></button><button type="button" class="button-link-delete glidara-slider-remove"><?php esc_html_e( 'Remove', 'glidara-slider' ); ?></button></div>
+			<div class="glidara-slider-handle"><span class="dashicons dashicons-move"></span><strong class="glidara-slide-number"><?php esc_html_e( 'Slide', 'glidara-slider' ); ?></strong><span class="glidara-slide-summary"></span><button type="button" class="button-link glidara-slider-duplicate"><?php esc_html_e( 'Duplicate', 'glidara-slider' ); ?></button><button type="button" class="button-link-delete glidara-slider-remove"><?php esc_html_e( 'Remove', 'glidara-slider' ); ?></button></div>
 			<div class="glidara-slider-fields">
 				<label><?php esc_html_e( 'Type', 'glidara-slider' ); ?>
 					<select name="<?php echo esc_attr( $name ); ?>[type]">
@@ -121,7 +131,7 @@ final class Glidara_Slider_Plugin {
 				<label><?php esc_html_e( 'Button URL', 'glidara-slider' ); ?><input type="url" name="<?php echo esc_attr( $name ); ?>[button_url]" value="<?php echo esc_url( $slide['button_url'] ); ?>"></label>
 				<label><?php esc_html_e( 'Open button link', 'glidara-slider' ); ?><select name="<?php echo esc_attr( $name ); ?>[button_target]"><option value="_self" <?php selected( $slide['button_target'], '_self' ); ?>><?php esc_html_e( 'Same window', 'glidara-slider' ); ?></option><option value="_blank" <?php selected( $slide['button_target'], '_blank' ); ?>><?php esc_html_e( 'New window', 'glidara-slider' ); ?></option></select></label>
 				<fieldset class="glidara-slider-design-fields"><legend><?php esc_html_e( 'Slide design', 'glidara-slider' ); ?></legend><label><?php esc_html_e( 'Background', 'glidara-slider' ); ?><input type="color" name="<?php echo esc_attr( $name ); ?>[background]" value="<?php echo esc_attr( $slide['background'] ); ?>"></label><label><?php esc_html_e( 'Overlay opacity', 'glidara-slider' ); ?><input type="range" min="0" max="100" name="<?php echo esc_attr( $name ); ?>[overlay_opacity]" value="<?php echo absint( $slide['overlay_opacity'] ); ?>"></label><label><?php esc_html_e( 'Alignment', 'glidara-slider' ); ?><select name="<?php echo esc_attr( $name ); ?>[align]"><?php foreach ( array( 'left', 'center', 'right' ) as $align ) : ?><option value="<?php echo esc_attr( $align ); ?>" <?php selected( $slide['align'], $align ); ?>><?php echo esc_html( ucfirst( $align ) ); ?></option><?php endforeach; ?></select></label><label><input type="checkbox" name="<?php echo esc_attr( $name ); ?>[hide_mobile]" value="1" <?php checked( $slide['hide_mobile'] ); ?>><?php esc_html_e( 'Hide content on mobile', 'glidara-slider' ); ?></label></fieldset>
-				<?php if ( apply_filters( 'glidara_slider_layers_enabled', false ) ) : ?><fieldset class="glidara-slider-layer-builder"><legend><?php esc_html_e( 'Pro Layers', 'glidara-slider' ); ?></legend><div class="glidara-slider-layers" data-next-layer="<?php echo absint( count( $slide['layers'] ) ); ?>"><?php foreach ( (array) $slide['layers'] as $layer_index => $layer ) $this->layer_editor( $index, $layer_index, $layer ); ?></div><button type="button" class="button glidara-slider-add-layer"><?php esc_html_e( 'Add Layer', 'glidara-slider' ); ?></button></fieldset><?php endif; ?>
+				<?php if ( apply_filters( 'glidara_slider_layers_enabled', false ) ) : $layers_editable = apply_filters( 'glidara_slider_layers_editable', true ); ?><fieldset class="glidara-slider-layer-builder<?php echo $layers_editable ? '' : ' is-license-locked'; ?>" <?php disabled( ! $layers_editable ); ?>><legend><?php esc_html_e( 'Pro Layers', 'glidara-slider' ); ?></legend><?php if ( ! $layers_editable ) : ?><p class="glidara-license-lock-note"><?php esc_html_e( 'Layers are read-only until the Pro license is active.', 'glidara-slider' ); ?></p><?php endif; ?><div class="glidara-slider-layers" data-next-layer="<?php echo absint( count( $slide['layers'] ) ); ?>"><?php foreach ( (array) $slide['layers'] as $layer_index => $layer ) $this->layer_editor( $index, $layer_index, $layer ); ?></div><button type="button" class="button glidara-slider-add-layer"><?php esc_html_e( 'Add Layer', 'glidara-slider' ); ?></button></fieldset><?php endif; ?>
 			</div>
 		</div>
 		<?php
@@ -182,6 +192,7 @@ final class Glidara_Slider_Plugin {
 				<label class="glidara-custom-css"><?php esc_html_e( 'Basic custom CSS', 'glidara-slider' ); ?><textarea name="glidara_slider_settings[custom_css]" rows="6" placeholder=".glidara-slider__button { ... }"><?php echo esc_textarea( $settings['custom_css'] ); ?></textarea></label>
 			</section>
 			<?php do_action( 'glidara_slider_settings_panel', $post, $settings ); ?>
+			<?php if ( ! class_exists( 'Glidara_Slider_Pro' ) ) : ?><section class="glidara-settings-card glidara-pro-readonly"><div class="glidara-pro-readonly__heading"><span class="dashicons dashicons-lock"></span><div><h3><?php esc_html_e( 'Professional capabilities', 'glidara-slider' ); ?></h3><p><?php esc_html_e( 'Explore what becomes editable with Glidara Pro.', 'glidara-slider' ); ?></p></div><span class="glidara-pro-badge">PRO</span></div><div class="glidara-pro-feature-list"><?php foreach ( array( 'Visual layer canvas', 'Dynamic post sliders', 'WooCommerce products', 'Slide scheduling', 'Conversion analytics', 'Elementor widget' ) as $feature ) : ?><span><i class="dashicons dashicons-lock"></i><?php echo esc_html( $feature ); ?></span><?php endforeach; ?></div><a class="button button-primary" href="<?php echo esc_url( admin_url( 'edit.php?post_type=glidara_slider&page=glidara-slider-go-pro' ) ); ?>"><?php esc_html_e( 'View Glidara Pro — $19.99/year', 'glidara-slider' ); ?></a></section><?php endif; ?>
 		</div>
 		<?php
 	}
@@ -214,7 +225,7 @@ final class Glidara_Slider_Plugin {
 				'overlay_opacity' => min( 100, absint( $slide['overlay_opacity'] ?? 55 ) ),
 				'align'       => in_array( $slide['align'] ?? '', array( 'left', 'center', 'right' ), true ) ? $slide['align'] : 'left',
 				'hide_mobile' => empty( $slide['hide_mobile'] ) ? 0 : 1,
-				'layers'      => apply_filters( 'glidara_slider_layers_enabled', false ) ? $this->sanitize_layers( $slide['layers'] ?? array() ) : (array) ( $existing_slides[ $slide_index ]['layers'] ?? array() ),
+				'layers'      => apply_filters( 'glidara_slider_layers_editable', apply_filters( 'glidara_slider_layers_enabled', false ) ) ? $this->sanitize_layers( $slide['layers'] ?? array() ) : (array) ( $existing_slides[ $slide_index ]['layers'] ?? array() ),
 			);
 			$slides[ count( $slides ) - 1 ] = apply_filters( 'glidara_slider_sanitized_slide', $slides[ count( $slides ) - 1 ], $slide, $post_id );
 		}
@@ -292,7 +303,11 @@ final class Glidara_Slider_Plugin {
 	}
 
 	public function admin_assets( $hook ) {
-		if ( in_array( $hook, array( 'settings_page_glidara-slider-go-pro', 'settings_page_glidara-slider-tools' ), true ) ) {
+		if ( 'edit.php' === $hook && 'glidara_slider' === get_current_screen()->post_type ) {
+			wp_enqueue_style( 'glidara-slider-admin', GLIDARA_SLIDER_URL . 'assets/css/admin.css', array(), GLIDARA_SLIDER_VERSION );
+			return;
+		}
+		if ( isset( $_GET['page'] ) && in_array( sanitize_key( $_GET['page'] ), array( 'glidara-slider-go-pro', 'glidara-slider-tools' ), true ) ) {
 			wp_enqueue_style( 'glidara-slider-admin', GLIDARA_SLIDER_URL . 'assets/css/admin.css', array(), GLIDARA_SLIDER_VERSION );
 			wp_enqueue_style( 'glidara-slider-admin-extras', GLIDARA_SLIDER_URL . 'assets/css/admin-extras.css', array( 'glidara-slider-admin' ), GLIDARA_SLIDER_VERSION );
 			return;
@@ -300,8 +315,11 @@ final class Glidara_Slider_Plugin {
 		if ( in_array( $hook, array( 'post.php', 'post-new.php' ), true ) && 'glidara_slider' === get_current_screen()->post_type ) {
 			wp_enqueue_script( 'jquery-ui-sortable' );
 			wp_enqueue_media();
-			wp_enqueue_script( 'glidara-slider-admin', GLIDARA_SLIDER_URL . 'assets/js/admin.js', array( 'jquery', 'jquery-ui-sortable', 'wp-util' ), GLIDARA_SLIDER_VERSION, true );
-			wp_enqueue_style( 'glidara-slider-admin', GLIDARA_SLIDER_URL . 'assets/css/admin.css', array(), GLIDARA_SLIDER_VERSION );
+			$editor_asset_version = GLIDARA_SLIDER_VERSION . '-editor-4';
+			wp_enqueue_script( 'glidara-slider-admin', GLIDARA_SLIDER_URL . 'assets/js/admin.js', array( 'jquery', 'jquery-ui-sortable', 'wp-util' ), $editor_asset_version, true );
+			wp_enqueue_style( 'glidara-slider-admin', GLIDARA_SLIDER_URL . 'assets/css/admin.css', array(), $editor_asset_version );
+			wp_enqueue_style( 'glidara-slider-editor-shell', GLIDARA_SLIDER_URL . 'assets/css/editor-shell.css', array( 'glidara-slider-admin' ), $editor_asset_version );
+			wp_enqueue_style( 'glidara-slider-editor-interactions', GLIDARA_SLIDER_URL . 'assets/css/editor-interactions.css', array( 'glidara-slider-editor-shell' ), $editor_asset_version );
 			if ( apply_filters( 'glidara_slider_layers_enabled', false ) ) wp_enqueue_style( 'glidara-slider-admin-layers', GLIDARA_SLIDER_URL . 'assets/css/admin-layers.css', array( 'glidara-slider-admin' ), GLIDARA_SLIDER_VERSION );
 		}
 	}
@@ -317,6 +335,7 @@ final class Glidara_Slider_Plugin {
 		$id = absint( shortcode_atts( array( 'id' => 0 ), $atts, 'glidara_slider' )['id'] );
 		if ( ! $id ) return '';
 		$slides = (array) get_post_meta( $id, '_glidara_slider_slides', true );
+		$slides = (array) apply_filters( 'glidara_slider_render_slides', $slides, $id );
 		if ( ! $slides ) return '';
 		$settings = wp_parse_args( (array) get_post_meta( $id, '_glidara_slider_settings', true ), self::defaults() );
 		wp_enqueue_script( 'glidara-slider' );

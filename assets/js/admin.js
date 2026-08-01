@@ -32,6 +32,16 @@ jQuery(($) => {
     preview();
   }
   builder.on('click', '.glidara-slider-add', () => addSlide())
+	.on('click', '.glidara-editor-tab', function () {
+	  const tab = $(this).data('tab');
+	  builder.find('.glidara-editor-tab').removeClass('is-active').attr('aria-selected', 'false');
+	  $(this).addClass('is-active').attr('aria-selected', 'true');
+	  builder.find('.glidara-editor-panel').removeClass('is-active').filter(`[data-panel="${tab}"]`).addClass('is-active');
+	})
+	.on('click', '.glidara-copy-code', function () {
+	  navigator.clipboard?.writeText($(this).data('copy'));
+	  const button = $(this); button.text('Copied'); setTimeout(() => button.text('Copy shortcode'), 1400);
+	})
     .on('click', '.glidara-slider-media', function () {
       const row = $(this).closest('.glidara-slider-media-row');
       const frame = wp.media({ title: 'Choose slide image', button: { text: 'Use image' }, multiple: false });

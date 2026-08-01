@@ -1,6 +1,6 @@
 # Product roadmap
 
-See [FEATURES.md](FEATURES.md) for the shipped 2.5.0 inventory and honest foundation/roadmap labels.
+See [FEATURES.md](FEATURES.md) for the shipped 2.7.0 inventory and honest foundation/roadmap labels.
 
 ## Next milestones
 

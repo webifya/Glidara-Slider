@@ -4,7 +4,7 @@ Tags: slider, carousel, image slider, responsive slider
 Requires at least: 6.2
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 2.5.0
+Stable tag: 2.7.0
 License: GPLv2 or later
 
 A fast, responsive WordPress slider builder for images, promotions and carousels—without slowing down your website.
@@ -22,6 +22,11 @@ Publish with the Glidara block, widget, Classic Editor button, `[glidara_slider 
 3. Open Sliders > Add New.
 
 == Changelog ==
+
+= 2.7.0 =
+* Improved the Gutenberg block with published-slider status, create/edit shortcuts and clearer editor guidance.
+* Added wide/full alignment and anchor support while retaining server-side rendering.
+* Kept shortcode, widget, Classic Editor and PHP publishing paths fully available in Free.
 
 = 2.5.0 =
 * Added Health Checker 2.0 with a local performance/accessibility/SEO/conversion score, image-weight estimates and actionable warnings.

@@ -2,9 +2,9 @@
 
 Glidara's product promise is: **a fast, responsive WordPress slider builder for images, products, posts, and promotions—without slowing down your website.**
 
-This document labels features honestly. “Shipped” means available in 2.5.0. “Foundation” means a useful first implementation exists and will be expanded. “Roadmap” is not advertised as available.
+This document labels features honestly. “Shipped” means available in 2.7.0. “Foundation” means a useful first implementation exists and will be expanded. “Roadmap” is not advertised as available.
 
-## Free 2.5.0
+## Free 2.7.0
 
 ### Shipped
 
@@ -29,7 +29,7 @@ This document labels features honestly. “Shipped” means available in 2.5.0. 
 - Carousel item controls currently use adaptive equal-width cards; advanced variable-width/multi-row behavior is Pro roadmap work.
 - Health Checker 2.0 is advisory and local; automated contrast measurement and browser-based overflow detection remain roadmap work.
 
-## Pro 2.5.0
+## Pro 2.7.0
 
 ### Shipped or foundation
 

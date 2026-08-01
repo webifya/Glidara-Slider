@@ -5,13 +5,16 @@ document.querySelectorAll('.glidara-slider').forEach((root) => {
   const currentLabel = root.querySelector('.glidara-slider__counter span');
   let current = 0, timer, startX = 0, items = 1;
   if (!slides.length) return;
+	['centered', 'partial', 'ticker', 'free_scroll', 'equal_height'].forEach((feature) => { if (settings[`pro_${feature}`]) root.classList.add(`glidara-slider--pro-${feature.replace('_', '-')}`); });
   const updateItems = () => {
     const carousel = ['carousel', 'logo'].includes(settings.layout_type);
 	items = carousel ? (innerWidth <= 600 ? Number(settings.mobile_slides) || 1 : innerWidth <= 1024 ? Number(settings.tablet_slides) || 2 : Number(settings.slides_per_view) || 1) : 1;
 	items = Math.max(1, Math.min(items, slides.length));
     if (settings.direction === 'vertical') items = 1;
     root.style.setProperty('--glidara-items', items);
-    root.style.setProperty('--glidara-step', `${100 / items}%`);
+	const renderedItems = items + (settings.pro_partial && ['carousel', 'logo'].includes(settings.layout_type) ? 0.25 : 0);
+	root.style.setProperty('--glidara-render-items', renderedItems);
+	root.style.setProperty('--glidara-step', `${100 / renderedItems}%`);
   };
   const lastIndex = () => Math.max(0, slides.length - items);
   const show = (next, restart = false) => {
@@ -27,7 +30,7 @@ document.querySelectorAll('.glidara-slider').forEach((root) => {
     root.dispatchEvent(new CustomEvent('glidaraSliderChange', { detail: { sliderId: Number(root.dataset.sliderId || 0), slide: current } }));
     if (restart) { stop(); play(); }
   };
-  const play = () => { if (settings.autoplay && slides.length > items && !(settings.stop_last && current === lastIndex())) timer = window.setInterval(() => show(current + 1), Number(settings.duration) || 5200); };
+	const play = () => { if ((settings.autoplay || settings.pro_ticker) && slides.length > items && !(settings.stop_last && current === lastIndex())) timer = window.setInterval(() => show(current + 1), settings.pro_ticker ? 1800 : Number(settings.duration) || 5200); };
   const stop = () => window.clearInterval(timer);
   const navigate = (next) => show(next, true);
   root.querySelector('.glidara-slider__prev')?.addEventListener('click', () => navigate(current - 1));

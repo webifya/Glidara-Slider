@@ -1,0 +1,12 @@
+{
+  "apiVersion": 3,
+  "name": "glidara/slider",
+  "version": "2.2.2",
+  "title": "Glidara Slider",
+  "category": "media",
+  "icon": "images-alt2",
+  "description": "Display a responsive Glidara slider.",
+  "textdomain": "glidara-slider",
+  "attributes": { "id": { "type": "number", "default": 0 } },
+  "editorScript": "glidara-slider-block"
+}

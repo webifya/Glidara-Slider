@@ -4,7 +4,9 @@ The free, open-source slider plugin by Webifya.
 
 Development repository: https://github.com/webifya/Glidara-Slider
 
-## Current milestone: 1.0.0
+## Current milestone: 2.2.2
+
+The WordPress dashboard entry is **Settings → Glidara Slider**. Each slider uses dedicated **Slides**, **Slider Settings**, and **Publish** tabs for a cleaner editing workflow.
 
 - Unlimited sliders and slides
 - Drag-and-drop ordering and live preview
